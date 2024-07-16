@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:alpine
+    restart: always
+    env_file:
+      - db-config.env
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    expose:
+      - 5432
+  web:
+    depends_on:
+      - db
+    image: zoode-backend
+    env_file:
+      - db-config.env
+    environment:
+      DB_HOST: db
+      DB_PORT: ${POSTGRES_PORT}
+      DB_TITLE: ${POSTGRES_DB}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 8080:8080
+    restart: always

@@ -1,11 +1,12 @@
 package com.example.sber_ai.dto;
 
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+
 public class ProjectRequestDto {
     @NonNull
     private String name;

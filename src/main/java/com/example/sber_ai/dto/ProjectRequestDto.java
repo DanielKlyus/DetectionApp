@@ -6,7 +6,6 @@ import java.util.UUID;
 
 @Getter
 @Setter
-
 public class ProjectRequestDto {
     @NonNull
     private String name;

@@ -1,12 +1,11 @@
 package com.example.sber_ai.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
 public class ProjectResponseDto {
     private UUID id;
 

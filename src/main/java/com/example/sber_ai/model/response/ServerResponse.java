@@ -65,7 +65,7 @@ public class ServerResponse {
 
         @Override
         public String toString() {
-            return "SpeciesPredict{" +
+            return "MegadetectorPredict{" +
                     "labels=" + labels +
                     ", scores=" + scores +
                     ", bboxes=" + bboxes +

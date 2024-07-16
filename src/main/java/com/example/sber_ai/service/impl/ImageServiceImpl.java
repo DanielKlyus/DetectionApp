@@ -26,11 +26,13 @@ import java.util.concurrent.TimeUnit;
 @Getter
 public class ImageServiceImpl implements ImageService {
     private final ObjectMapper mapper;
+
     private OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(100, TimeUnit.SECONDS)
             .writeTimeout(100, TimeUnit.SECONDS)
             .readTimeout(100, TimeUnit.SECONDS)
             .build();
+
     @Value("${ml.server.url}")
     private String url;
 
@@ -45,7 +47,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Optional<ServerResponse> sendImage(String fileName) {
-        int maxAttempts = 5;
+        final int maxAttempts = 5;
 
         for (int attempt = 0; attempt < maxAttempts; ++attempt) {
 

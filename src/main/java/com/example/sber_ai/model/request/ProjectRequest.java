@@ -1,4 +1,4 @@
-package com.example.sber_ai.dto;
+package com.example.sber_ai.model.request;
 
 import lombok.*;
 
@@ -6,16 +6,14 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class ProjectRequestDto {
-    @NonNull
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProjectRequest {
     private String name;
 
-    @NonNull
     private String pathSource;
 
-    @NonNull
     private String pathSave;
 
-    @NonNull
     private UUID userId;
 }

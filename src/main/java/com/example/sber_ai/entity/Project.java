@@ -24,6 +24,9 @@ public class Project {
     private String pathSave;
 
     @ManyToOne
-    @Column(name = "user_id")
-    private User userId;
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column(name = "is_active")
+    private boolean isActive;
 }

@@ -10,6 +10,6 @@ CREATE TABLE projects (
 	"path_source"   TEXT        NOT NULL,
 	"path_save"     TEXT        NOT NULL,
 	"user_id"	    UUID		NOT NULL,
-
+    "is_active"     BOOLEAN     NOT NULL,
 	CONSTRAINT fk_projects_user FOREIGN KEY ("user_id") REFERENCES users ("id")
 );

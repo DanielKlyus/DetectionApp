@@ -1,4 +1,3 @@
-version: "3.9"
 
 services:
   db:
@@ -8,17 +7,12 @@ services:
       - src/main/resources/env/db-config.env
     ports:
       - "5432:5432"
-#  web:
-#    depends_on:
-#      - db
-#    image: zoode-backend
-#    env_file:
-#      - db-config.env
-#    environment:
-#      DB_HOST: db
-#      DB_PORT: ${POSTGRES_PORT}
-#      DB_TITLE: ${POSTGRES_DB}
-#      DB_PASSWORD: ${POSTGRES_PASSWORD}
-#    ports:
-#      - "8080:8080"
-#    restart: always
+  web:
+    depends_on:
+      - db
+    image: openjdk:17-jdk-alpine
+    env_file:
+      - src/main/resources/env/db-config.env
+    ports:
+      - "8080:8080"
+    restart: always

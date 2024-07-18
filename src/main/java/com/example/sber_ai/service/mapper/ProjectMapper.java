@@ -5,7 +5,7 @@ import com.example.sber_ai.model.response.ProjectResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface ProjectMapper {
     @Mapping(source = "user.id", target = "userId")
     ProjectResponse mapToResponse(Project project);

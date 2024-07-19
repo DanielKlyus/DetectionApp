@@ -1,8 +1,8 @@
 package com.example.sber_ai.service;
 
-import com.example.sber_ai.model.request.UserRequest;
-import com.example.sber_ai.model.response.UserResponse;
+import com.example.sber_ai.model.request.CreateUserRequest;
+import com.example.sber_ai.model.response.CreateUserResponse;
 
 public interface UserService {
-    public UserResponse createUser(UserRequest userRequest);
+    public CreateUserResponse createUser(CreateUserRequest createUserRequest);
 }

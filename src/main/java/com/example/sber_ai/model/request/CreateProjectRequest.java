@@ -8,7 +8,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectRequest {
+public class CreateProjectRequest {
     private String name;
 
     private String pathSource;

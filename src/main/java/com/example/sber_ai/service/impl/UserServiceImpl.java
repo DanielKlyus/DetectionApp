@@ -1,8 +1,8 @@
 package com.example.sber_ai.service.impl;
 
 import com.example.sber_ai.entity.User;
-import com.example.sber_ai.model.request.UserRequest;
-import com.example.sber_ai.model.response.UserResponse;
+import com.example.sber_ai.model.request.CreateUserRequest;
+import com.example.sber_ai.model.response.CreateUserResponse;
 import com.example.sber_ai.repository.UserRepository;
 import com.example.sber_ai.service.UserService;
 import com.example.sber_ai.service.mapper.UserMapper;
@@ -19,9 +19,9 @@ public class UserServiceImpl  implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     @Override
-    public UserResponse createUser(UserRequest userRequest) {
+    public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
         User user = new User();
-        user.setName(userRequest.getName());
+        user.setName(createUserRequest.getName());
         user.setAdmin(false);
         userRepository.save(user);
 

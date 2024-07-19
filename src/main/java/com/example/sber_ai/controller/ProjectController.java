@@ -1,13 +1,15 @@
 package com.example.sber_ai.controller;
 
-import com.example.sber_ai.model.request.ProjectRequest;
-import com.example.sber_ai.model.response.ProjectResponse;
+import com.example.sber_ai.model.request.CreateProjectRequest;
+import com.example.sber_ai.model.request.GetProjectRequest;
+import com.example.sber_ai.model.response.CreateProjectResponse;
+import com.example.sber_ai.model.response.GetProjectResponse;
 import com.example.sber_ai.service.ProjectService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,7 +18,17 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @PostMapping("/create")
-    public ProjectResponse createProject(@RequestBody ProjectRequest projectRequest) {
-        return projectService.createProject(projectRequest);
+    public CreateProjectResponse createProject(@RequestBody CreateProjectRequest createProjectRequest) {
+        return projectService.createProject(createProjectRequest);
+    }
+
+    @GetMapping("/get")
+    public GetProjectResponse getProject(@RequestBody GetProjectRequest getProjectRequest) {
+        return projectService.getProject(getProjectRequest);
+    }
+
+    @GetMapping("/get_from/{userId}")
+    public ArrayList<GetProjectResponse> getUserProjects(@PathVariable UUID userId) {
+        return projectService.getUserProjects(userId);
     }
 }

@@ -1,7 +1,7 @@
 package com.example.sber_ai.controller;
 
-import com.example.sber_ai.model.request.UserRequest;
-import com.example.sber_ai.model.response.UserResponse;
+import com.example.sber_ai.model.request.CreateUserRequest;
+import com.example.sber_ai.model.response.CreateUserResponse;
 import com.example.sber_ai.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +16,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/create")
-    public UserResponse createUser(@RequestBody UserRequest userRequest) {
-        return userService.createUser(userRequest);
+    public CreateUserResponse createUser(@RequestBody CreateUserRequest createUserRequest) {
+        return userService.createUser(createUserRequest);
     }
 }

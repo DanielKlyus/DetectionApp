@@ -1,8 +1,10 @@
 package com.example.sber_ai.service.impl;
 
 import com.example.sber_ai.entity.Project;
-import com.example.sber_ai.model.request.ProjectRequest;
-import com.example.sber_ai.model.response.ProjectResponse;
+import com.example.sber_ai.model.request.CreateProjectRequest;
+import com.example.sber_ai.model.request.GetProjectRequest;
+import com.example.sber_ai.model.response.CreateProjectResponse;
+import com.example.sber_ai.model.response.GetProjectResponse;
 import com.example.sber_ai.repository.ProjectRepository;
 import com.example.sber_ai.repository.UserRepository;
 import com.example.sber_ai.service.ProjectService;
@@ -14,6 +16,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,22 +26,37 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final ProjectMapper projectMapper;
+
     @Override
-    public ProjectResponse createProject(ProjectRequest projectRequest) {
+    public CreateProjectResponse createProject(CreateProjectRequest createProjectRequest) {
         Project project = new Project();
-        project.setName(projectRequest.getName());
-        project.setPathSource(projectRequest.getPathSource());
-        project.setPathSave(projectRequest.getPathSave());
-        project.setUser(userRepository.getById(projectRequest.getUserId()));
-        ArrayList<Project> projects = projectRepository.findAllByUserId(projectRequest.getUserId());
+        project.setName(createProjectRequest.getName());
+        project.setPathSource(createProjectRequest.getPathSource());
+        project.setPathSave(createProjectRequest.getPathSave());
+        project.setUser(userRepository.getById(createProjectRequest.getUserId()));
+        ArrayList<Project> projects = projectRepository.findAllByUserId(createProjectRequest.getUserId());
         for (Project p : projects) {
             p.setActive(false);
         }
         project.setActive(true);
         projectRepository.save(project);
 
-
-
         return projectMapper.mapToResponse(project);
+    }
+
+    @Override
+    public GetProjectResponse getProject(GetProjectRequest getProjectRequest) {
+        Project project = projectRepository.getById(getProjectRequest.getId());
+        return projectMapper.mapToGetResponse(project);
+    }
+
+    @Override
+    public ArrayList<GetProjectResponse> getUserProjects(UUID projectId) {
+        ArrayList<Project> projects = projectRepository.findAllByUserId(projectId);
+        ArrayList<GetProjectResponse> responses = new ArrayList<>();
+        for (Project p : projects) {
+            responses.add(projectMapper.mapToGetResponse(p));
+        }
+        return responses;
     }
 }

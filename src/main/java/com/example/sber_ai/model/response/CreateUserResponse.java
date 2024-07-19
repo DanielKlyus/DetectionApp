@@ -1,6 +1,9 @@
 package com.example.sber_ai.model.response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
@@ -8,16 +11,10 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectResponse {
+public class CreateUserResponse {
     private UUID id;
 
     private String name;
 
-    private String pathSource;
-
-    private String pathSave;
-
-    private UUID userId;
-
-    private boolean isActive;
+    private boolean isAdmin;
 }

@@ -11,5 +11,15 @@ CREATE TABLE projects (
 	"path_save"     TEXT        NOT NULL,
 	"user_id"	    BIGINT		NOT NULL,
     "is_active"     BOOLEAN     NOT NULL,
+    "result"        JSONB,
 	CONSTRAINT fk_projects_user FOREIGN KEY ("user_id") REFERENCES users ("id")
+);
+
+CREATE TABLE categories (
+    "id"            BIGINT		PRIMARY KEY NOT NULL,
+    "name"		    TEXT		NOT NULL,
+    "species"       TEXT        NOT NULL,
+    "img"           TEXT        NOT NULL,
+    "class"         TEXT        NOT NULL DEFAULT 'animal',
+    "type"          TEXT        NOT NULL
 );

@@ -16,7 +16,6 @@ import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +50,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ArrayList<GetProjectResponse> getUserProjects(UUID projectId) {
+    public ArrayList<GetProjectResponse> getUserProjects(Long projectId) {
         ArrayList<Project> projects = projectRepository.findAllByUserId(projectId);
         ArrayList<GetProjectResponse> responses = new ArrayList<>();
         for (Project p : projects) {

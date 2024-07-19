@@ -5,14 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetProjectResponse {
-    private UUID id;
+    private Long id;
 
     private String name;
 
@@ -20,7 +18,7 @@ public class GetProjectResponse {
 
     private String pathSave;
 
-    private UUID userId;
+    private Long userId;
 
     private boolean isActive;
 }

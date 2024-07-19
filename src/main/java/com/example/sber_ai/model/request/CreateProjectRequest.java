@@ -2,8 +2,6 @@ package com.example.sber_ai.model.request;
 
 import lombok.*;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,5 +13,5 @@ public class CreateProjectRequest {
 
     private String pathSave;
 
-    private UUID userId;
+    private Long userId;
 }

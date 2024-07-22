@@ -1,6 +1,7 @@
-package com.example.sber_ai.dto;
+package com.example.sber_ai.model.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 

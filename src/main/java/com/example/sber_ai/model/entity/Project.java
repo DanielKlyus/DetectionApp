@@ -1,10 +1,8 @@
-package com.example.sber_ai.entity;
+package com.example.sber_ai.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -13,7 +11,7 @@ import java.util.UUID;
 public class Project {
     @Id
     @GeneratedValue
-    private UUID id;
+    private Long id;
 
     private String name;
 
@@ -24,6 +22,7 @@ public class Project {
     private String pathSave;
 
     @ManyToOne
-    @Column(name = "user_id")
+    @JoinColumn(name = "user_id")
     private User userId;
+
 }

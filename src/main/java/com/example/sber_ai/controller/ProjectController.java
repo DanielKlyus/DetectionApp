@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +26,7 @@ public class ProjectController {
         return projectService.getProject(getProjectRequest);
     }
 
-    @GetMapping("/get_from/{userId}")
+    @GetMapping("/get/from/{userId}")
     public ArrayList<GetProjectResponse> getUserProjects(@PathVariable Long userId) {
         return projectService.getUserProjects(userId);
     }

@@ -28,16 +28,11 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public CreateProjectResponse createProject(CreateProjectRequest createProjectRequest) {
-        Project project = new Project();
-        project.setName(createProjectRequest.getName());
-        project.setPathSource(createProjectRequest.getPathSource());
-        project.setPathSave(createProjectRequest.getPathSave());
-        project.setUser(userRepository.getById(createProjectRequest.getUserId()));
         ArrayList<Project> projects = projectRepository.findAllByUserId(createProjectRequest.getUserId());
         for (Project p : projects) {
             p.setActive(false);
         }
-        project.setActive(true);
+        Project project = projectMapper.mapToEntity(createProjectRequest);
         projectRepository.save(project);
 
         return projectMapper.mapToResponse(project);

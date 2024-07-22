@@ -1,11 +1,11 @@
 CREATE TABLE users (
-	"id"		    BIGINT 		PRIMARY KEY	NOT NULL,
+	"id"		    BIGSERIAL 	PRIMARY KEY	NOT NULL,
 	"name"		    TEXT		NOT NULL,
 	"is_admin"      BOOLEAN		NOT NULL
 );
 
 CREATE TABLE projects (
-	"id" 		    BIGINT		PRIMARY KEY NOT NULL,
+	"id" 		    BIGSERIAL	PRIMARY KEY NOT NULL,
 	"name"		    TEXT		NOT NULL,
 	"path_source"   TEXT        NOT NULL,
 	"path_save"     TEXT        NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE projects (
 );
 
 CREATE TABLE categories (
-    "id"            BIGINT		PRIMARY KEY NOT NULL,
+    "id"            BIGSERIAL   PRIMARY KEY NOT NULL,
     "name"		    TEXT		NOT NULL,
     "species"       TEXT        NOT NULL,
     "img"           TEXT        NOT NULL,

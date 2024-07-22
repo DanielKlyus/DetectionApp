@@ -1,6 +1,6 @@
 package com.example.sber_ai.service.impl;
 
-import com.example.sber_ai.entity.User;
+import com.example.sber_ai.model.entity.User;
 import com.example.sber_ai.model.request.CreateUserRequest;
 import com.example.sber_ai.model.response.CreateUserResponse;
 import com.example.sber_ai.repository.UserRepository;
@@ -15,9 +15,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Setter
 @Getter
-public class UserServiceImpl  implements UserService {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+
     @Override
     public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
         User user = new User();

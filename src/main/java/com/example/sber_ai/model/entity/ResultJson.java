@@ -1,4 +1,4 @@
-package com.example.sber_ai.entity;
+package com.example.sber_ai.model.entity;
 
 import lombok.Getter;
 import lombok.Setter;

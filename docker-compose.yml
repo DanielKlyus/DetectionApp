@@ -1,3 +1,4 @@
+version: "3.9"
 
 services:
   db:
@@ -7,6 +8,8 @@ services:
       - src/main/resources/env/db-config.env
     ports:
       - "5432:5432"
+    container_name:
+      zoode-db
   web:
     depends_on:
       - db
@@ -16,3 +19,22 @@ services:
     ports:
       - "8080:8080"
     restart: always
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    env_file:
+      - src/main/resources/env/.env
+    volumes:
+      - minio_storage:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+volumes:
+  minio_storage: {}

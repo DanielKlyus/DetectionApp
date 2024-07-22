@@ -1,6 +1,6 @@
 package com.example.sber_ai.service.mapper;
 
-import com.example.sber_ai.entity.Project;
+import com.example.sber_ai.model.entity.Project;
 import com.example.sber_ai.model.request.CreateProjectRequest;
 import com.example.sber_ai.model.response.CreateProjectResponse;
 import com.example.sber_ai.model.response.GetProjectResponse;

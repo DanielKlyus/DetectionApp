@@ -1,6 +1,6 @@
 package com.example.sber_ai.service.impl;
 
-import com.example.sber_ai.entity.Project;
+import com.example.sber_ai.model.entity.Project;
 import com.example.sber_ai.model.request.CreateProjectRequest;
 import com.example.sber_ai.model.request.GetProjectRequest;
 import com.example.sber_ai.model.response.CreateProjectResponse;
@@ -9,7 +9,6 @@ import com.example.sber_ai.repository.ProjectRepository;
 import com.example.sber_ai.repository.UserRepository;
 import com.example.sber_ai.service.ProjectService;
 import com.example.sber_ai.service.mapper.ProjectMapper;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

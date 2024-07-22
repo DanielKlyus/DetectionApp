@@ -20,6 +20,7 @@ target/
 *.ipr
 *.env
 /env/*.env
+./src/test
 
 ### NetBeans ###
 /nbproject/private/

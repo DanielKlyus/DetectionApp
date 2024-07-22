@@ -1,9 +1,11 @@
 package com.example.sber_ai.service;
 
-import com.example.sber_ai.model.response.ServerResponse;
+import com.example.sber_ai.model.file.FileInfo;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface ImageService {
-    Optional<ServerResponse> sendImage(String fileName);
+    List<FileInfo> uploadSourceFiles(String directoryPath, String projectName, String pathSave);
+
+    void saveAll(List<FileInfo> files, String projectName);
 }

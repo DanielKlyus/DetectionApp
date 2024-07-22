@@ -3,8 +3,10 @@ package com.example.sber_ai.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-import java.util.UUID;
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,18 +14,25 @@ import java.util.UUID;
 @Table(name = "projects")
 public class Project {
     @Id
-    @GeneratedValue
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String name;
 
-    @Column(name = "path_source")
+    @Column(name = "path_source", nullable = false)
     private String pathSource;
 
-    @Column(name = "path_save")
+    @Column(name = "path_save", nullable = false)
     private String pathSave;
 
     @ManyToOne
-    @Column(name = "user_id")
-    private User userId;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "result", columnDefinition = "jsonb")
+    private List<ResultJson> result;
 }

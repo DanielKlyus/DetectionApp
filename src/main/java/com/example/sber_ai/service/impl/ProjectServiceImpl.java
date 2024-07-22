@@ -1,5 +1,6 @@
 package com.example.sber_ai.service.impl;
 
+import com.example.sber_ai.exception.ProjectException;
 import com.example.sber_ai.model.entity.Project;
 import com.example.sber_ai.model.request.CreateProjectRequest;
 import com.example.sber_ai.model.request.GetProjectRequest;
@@ -12,14 +13,17 @@ import com.example.sber_ai.service.mapper.ProjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Setter
 @Getter
+@Slf4j
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
@@ -39,8 +43,13 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public GetProjectResponse getProject(GetProjectRequest getProjectRequest) {
-        Project project = projectRepository.getById(getProjectRequest.getId());
-        return projectMapper.mapToGetResponse(project);
+        Optional<Project> project = projectRepository.findById(getProjectRequest.getId());
+        if(project.isPresent()) {
+            return projectMapper.mapToGetResponse(project.get());
+        } else {
+            log.error("Project with id {} not found", getProjectRequest.getId());
+            throw new ProjectException("Project with id " + getProjectRequest.getId() + " not found");
+        }
     }
 
     @Override

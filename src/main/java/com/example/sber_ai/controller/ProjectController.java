@@ -8,7 +8,7 @@ import com.example.sber_ai.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class ProjectController {
     }
 
     @GetMapping("/get/from/{userId}")
-    public ArrayList<GetProjectResponse> getUserProjects(@PathVariable Long userId) {
+    public List<GetProjectResponse> getUserProjects(@PathVariable Long userId) {
         return projectService.getUserProjects(userId);
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,12 +51,10 @@ public class ImageServiceImpl implements ImageService {
     private final ObjectMapper objectMapper;
 
     @Override
-    public List<FileInfo> uploadSourceFiles(String directoryPath, String projectName, String pathSave) {
+    public void uploadSourceFiles(String directoryPath, String projectName, String pathSave) {
         List<FileInfo> resultImages = processImages(directoryPath);
         minioService.upload(resultImages, projectName);
         saveAll(resultImages, projectName);
-        log.info("Uploaded {} images", resultImages);
-        return resultImages;
     }
 
     @Override
@@ -64,7 +63,6 @@ public class ImageServiceImpl implements ImageService {
         files.forEach(fileInfo -> {
             try {
                 imageRepository.save(fileInfo.toEntity(fileInfo, projectId));
-                log.info("Saved image {}", fileInfo);
             } catch (ImageException e) {
                 log.error("Cannot save image: {}", e.getMessage());
             }
@@ -81,7 +79,9 @@ public class ImageServiceImpl implements ImageService {
                 BufferedImage image = imageDrawer.convertMultipartFileToBufferedImage(fileInfo.getFile());
                 BufferedImage drawnImage = imageDrawer.drawMlResults(image, serverResponse);
 
-                MultipartFile drawnImageFile = imageDrawer.convertBufferedImageToMultipartFile(fileInfo.getName(), drawnImage);
+                BufferedImage restoredImage = imageDrawer.restoreImageSize(drawnImage, fileInfo.getOriginalWidth(), fileInfo.getOriginalHeight());
+
+                MultipartFile drawnImageFile = imageDrawer.convertBufferedImageToMultipartFile(fileInfo.getName(), restoredImage);
                 fileInfo.setFile(drawnImageFile);
             });
         });
@@ -98,9 +98,21 @@ public class ImageServiceImpl implements ImageService {
                     .forEach(path -> {
                         File file = path.toFile();
 
+                        int originalWidth = 0;
+                        int originalHeight = 0;
+                        try {
+                            BufferedImage originalImage = ImageIO.read(file);
+                            originalWidth = originalImage.getWidth();
+                            originalHeight = originalImage.getHeight();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        imageDrawer.resizeImage(file);
+
                         try (FileInputStream inputStream = new FileInputStream(file)) {
                             MockMultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), Files.probeContentType(path), inputStream);
-                            FileInfo fileInfo = new FileInfo(file.getName(), path.toString(), multipartFile);
+                            FileInfo fileInfo = new FileInfo(file.getName(), path.toString(), multipartFile, originalWidth, originalHeight);
                             result.add(fileInfo);
                         } catch (IOException e) {
                             log.error("Cannot upload images from path {} : {}", directoryPath, e.getMessage());
@@ -115,5 +127,4 @@ public class ImageServiceImpl implements ImageService {
 
         return result;
     }
-
 }

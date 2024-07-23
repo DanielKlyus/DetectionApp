@@ -17,13 +17,19 @@ public class FileInfo {
 
     private String minioUrl;
 
+    private int originalWidth;
+
+    private int originalHeight;
+
     @JsonIgnore
     private MultipartFile file;
 
-    public FileInfo(String name, String path, MultipartFile file) {
+    public FileInfo(String name, String path, MultipartFile file, int originalWidth, int originalHeight) {
         this.name = name;
         this.path = path;
         this.file = file;
+        this.originalWidth = originalWidth;
+        this.originalHeight = originalHeight;
     }
 
     @Override

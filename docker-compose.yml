@@ -13,12 +13,18 @@ services:
   web:
     depends_on:
       - db
-    image: openjdk:17-jdk-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile
     env_file:
-      - src/main/resources/env/db-config.env
+      - src/main/resources/env/.env
     ports:
-      - "8080:8080"
-    restart: always
+      - "7890:7879"
+    restart: unless-stopped
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/zoode-db
+      - SPRING_DATASOURCE_USERNAME=defaultuser
+      - SPRING_DATASOURCE_PASSWORD=defaultpassword
   minio:
     image: minio/minio:latest
     container_name: minio

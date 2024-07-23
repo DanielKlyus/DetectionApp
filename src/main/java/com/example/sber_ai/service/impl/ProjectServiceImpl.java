@@ -8,6 +8,7 @@ import com.example.sber_ai.model.response.CreateProjectResponse;
 import com.example.sber_ai.model.response.GetProjectResponse;
 import com.example.sber_ai.repository.ProjectRepository;
 import com.example.sber_ai.repository.UserRepository;
+import com.example.sber_ai.service.ImageService;
 import com.example.sber_ai.service.ProjectService;
 import com.example.sber_ai.service.mapper.ProjectMapper;
 import lombok.Getter;
@@ -25,9 +26,14 @@ import java.util.Optional;
 @Getter
 @Slf4j
 public class ProjectServiceImpl implements ProjectService {
+
     private final ProjectRepository projectRepository;
+
     private final UserRepository userRepository;
+
     private final ProjectMapper projectMapper;
+
+    private final ImageService imageService;
 
     @Override
     public CreateProjectResponse createProject(CreateProjectRequest createProjectRequest) {
@@ -35,8 +41,10 @@ public class ProjectServiceImpl implements ProjectService {
         for (Project p : projects) {
             p.setActive(false);
         }
+
         Project project = projectMapper.mapToEntity(createProjectRequest);
         projectRepository.save(project);
+        imageService.uploadSourceFiles(project.getPathSource(), project.getName(), project.getPathSave());
 
         return projectMapper.mapToResponse(project);
     }
@@ -44,7 +52,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public GetProjectResponse getProject(GetProjectRequest getProjectRequest) {
         Optional<Project> project = projectRepository.findById(getProjectRequest.getId());
-        if(project.isPresent()) {
+        if (project.isPresent()) {
             return projectMapper.mapToGetResponse(project.get());
         } else {
             log.error("Project with id {} not found", getProjectRequest.getId());

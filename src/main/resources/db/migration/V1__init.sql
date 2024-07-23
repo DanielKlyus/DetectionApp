@@ -23,3 +23,12 @@ CREATE TABLE categories (
     "class"         TEXT        NOT NULL DEFAULT 'animal',
     "type"          TEXT        NOT NULL
 );
+
+CREATE TABLE images (
+    "id"            BIGSERIAL   PRIMARY KEY NOT NULL,
+    "name"		    TEXT		NOT NULL,
+    "path"          TEXT        NOT NULL,
+    "project_id"    BIGINT      NOT NULL,
+    "minio_url"     TEXT        NOT NULL,
+    CONSTRAINT fk_images_project FOREIGN KEY ("project_id") REFERENCES projects ("id")
+)

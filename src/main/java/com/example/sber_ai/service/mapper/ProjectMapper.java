@@ -17,5 +17,6 @@ public interface ProjectMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "active", constant = "true")
+    @Mapping(source = "userId", target = "user.id")
     Project mapToEntity(CreateProjectRequest request);
 }

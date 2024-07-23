@@ -10,6 +10,10 @@ import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -81,9 +85,38 @@ public class ImageSender {
     }
 
     private byte[] imageToBase64(String fileName) {
+        final int maxWidth = 1333;
+        final int maxHeight = 800;
         byte[] data;
+
         try {
-            data = Files.readAllBytes(Paths.get(fileName));
+            BufferedImage originalImage = ImageIO.read(Files.newInputStream(Paths.get(fileName)));
+
+            int width = originalImage.getWidth();
+            int height = originalImage.getHeight();
+            float aspectRatio = (float) width / height;
+
+            if (width > maxWidth) {
+                width = maxWidth;
+                height = (int) (maxWidth / aspectRatio);
+            }
+
+            if (height > maxHeight) {
+                height = maxHeight;
+                width = (int) (maxHeight * aspectRatio);
+            }
+
+            Image scaledImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = resizedImage.createGraphics();
+            g2d.drawImage(scaledImage, 0, 0, null);
+            g2d.dispose();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(resizedImage, "png", baos);
+            baos.flush();
+            data = baos.toByteArray();
+            baos.close();
         } catch (IOException e) {
             log.error("Cannot read image: {}", e.getMessage());
             throw new ImageException("Cannot read image");

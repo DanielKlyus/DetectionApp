@@ -1,8 +1,10 @@
 package com.example.sber_ai.service;
 
+import com.example.sber_ai.model.request.CreateCategoryRequest;
 import com.example.sber_ai.model.request.CreateProjectRequest;
-import com.example.sber_ai.model.request.GetProjectRequest;
+import com.example.sber_ai.model.response.CreateCategoryResponse;
 import com.example.sber_ai.model.response.CreateProjectResponse;
+import com.example.sber_ai.model.response.GetImageResponse;
 import com.example.sber_ai.model.response.GetProjectResponse;
 
 import java.util.List;
@@ -10,7 +12,13 @@ import java.util.List;
 public interface ProjectService {
     CreateProjectResponse createProject(CreateProjectRequest createProjectRequest);
 
-    GetProjectResponse getProject(GetProjectRequest getProjectRequest);
+    GetProjectResponse getProject(Long projectId);
 
     List<GetProjectResponse> getUserProjects(Long projectId);
+
+    CreateCategoryResponse createCategory(CreateCategoryRequest createCategoryRequest, Long projectId);
+
+    List<GetImageResponse> getCategoryImages(Long projectId, Long categoryId);
+
+    void initProject(Long id);
 }

@@ -1,9 +1,11 @@
 package com.example.sber_ai.service.impl;
 
 import com.example.sber_ai.exception.ImageException;
+import com.example.sber_ai.model.entity.Category;
 import com.example.sber_ai.model.entity.Project;
 import com.example.sber_ai.model.file.FileInfo;
 import com.example.sber_ai.model.response.ServerResponse;
+import com.example.sber_ai.repository.CategoryRepository;
 import com.example.sber_ai.repository.ImageRepository;
 import com.example.sber_ai.repository.ProjectRepository;
 import com.example.sber_ai.service.ImageService;
@@ -37,10 +39,11 @@ import java.util.stream.Stream;
 @Setter
 @Getter
 public class ImageServiceImpl implements ImageService {
+    private final ProjectRepository projectRepository;
 
     private final ImageRepository imageRepository;
 
-    private final ProjectRepository projectRepository;
+    private final CategoryRepository categoryRepository;
 
     private final ImageDrawer imageDrawer;
 
@@ -53,19 +56,32 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public void uploadSourceFiles(String directoryPath, String projectName, String pathSave) {
         List<FileInfo> resultImages = processImages(directoryPath);
-        minioService.upload(resultImages, projectName);
+        minioService.uploadSourceFiles(resultImages, projectName);
         saveAll(resultImages, projectName);
     }
 
     @Override
+    public String uploadFile(MultipartFile categoryImg) {
+        try {
+            return minioService.uploadFile(categoryImg);
+        } catch (Exception e) {
+            log.error("Cannot upload file: {}", e.getMessage());
+            throw new ImageException("Cannot upload file");
+        }
+    }
+
+    @Override
+    public String getMinioCategoryUrl(String categoryType) {
+        return minioService.getMinioCategoryUrl(categoryType);
+    }
+
+    @Override
     public void saveAll(List<FileInfo> files, String projectName) {
-        Project projectId = projectRepository.findByName(projectName).orElseThrow(() -> new ImageException("Project not found"));
+        Project project = projectRepository.findByName(projectName);
+        List<Category> categories = categoryRepository.findAllByProjectId(project);
         files.forEach(fileInfo -> {
-            try {
-                imageRepository.save(fileInfo.toEntity(fileInfo, projectId));
-            } catch (ImageException e) {
-                log.error("Cannot save image: {}", e.getMessage());
-            }
+            imageRepository.save(fileInfo.toEntity(fileInfo, categories));
+            log.info("Image {} saved with category {}", fileInfo.getName(), fileInfo.getCategory());
         });
     }
 
@@ -83,6 +99,33 @@ public class ImageServiceImpl implements ImageService {
 
                 MultipartFile drawnImageFile = imageDrawer.convertBufferedImageToMultipartFile(fileInfo.getName(), restoredImage);
                 fileInfo.setFile(drawnImageFile);
+
+                double minMlThreshold = 0.3;
+                ServerResponse.SpeciesPredict speciesPredict = response.get().getSpeciesPredict();
+                ServerResponse.MegadetectorPredict megadetectorPredict = response.get().getMegadetectorPredict();
+                if (!speciesPredict.getLabels().isEmpty()) {
+                    log.info("Species predict labels for animal {} with file name {}: {}", fileInfo.getPath(), fileInfo.getName(), speciesPredict.getLabels());
+                    fileInfo.setCategory(speciesPredict.getLabels().get(0));
+                    fileInfo.setAnimalCount(speciesPredict.getLabels().size());
+                    fileInfo.setThreshold(speciesPredict.getScores()
+                            .stream()
+                            .min(Double::compare)
+                            .orElse(minMlThreshold));
+
+                } else if (!megadetectorPredict.getLabels().isEmpty()) {
+                    log.info("Megadetector predict labels for animal {} with file name {}: {}", fileInfo.getPath(), fileInfo.getName(), megadetectorPredict.getLabels());
+                    fileInfo.setCategory(megadetectorPredict.getLabels().get(0));
+                    fileInfo.setAnimalCount(megadetectorPredict.getLabels().size());
+                    fileInfo.setThreshold(megadetectorPredict.getScores()
+                            .stream()
+                            .min(Double::compare)
+                            .orElse(minMlThreshold));
+
+                } else {
+                    fileInfo.setCategory("empty");
+                    fileInfo.setAnimalCount(0);
+                    fileInfo.setThreshold(minMlThreshold);
+                }
             });
         });
 
@@ -98,8 +141,8 @@ public class ImageServiceImpl implements ImageService {
                     .forEach(path -> {
                         File file = path.toFile();
 
-                        int originalWidth = 0;
-                        int originalHeight = 0;
+                        int originalWidth;
+                        int originalHeight;
                         try {
                             BufferedImage originalImage = ImageIO.read(file);
                             originalWidth = originalImage.getWidth();

@@ -1,9 +1,13 @@
 package com.example.sber_ai.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import java.time.LocalDateTime;
+
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -14,16 +18,34 @@ public class Image {
     @GeneratedValue
     private Long id;
 
-    @Column(name = "name", columnDefinition = "TEXT")
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "path", columnDefinition = "TEXT")
+    @Column(name = "path")
     private String path;
 
-    @Column(name = "minio_url", columnDefinition = "TEXT", length = 350)
+    @Column(name = "minio_url", length = 350)
     private String minioUrl;
 
+    @Column(name = "datetime", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private LocalDateTime dateTime;
+
+    @Column(name = "category")
+    private String category;
+
+    @Column(name = "animal_count")
+    private Integer animalCount;
+
+    @Column(name = "passage")
+    private Integer passage;
+
+    @Column(name = "animal_count_in_passage")
+    private Integer animalCountInPassage;
+
+    @Column(name = "threshold")
+    private Double threshold;
+
     @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project projectId;
+    @JoinColumn(name = "category_id")
+    private Category categoryId;
 }

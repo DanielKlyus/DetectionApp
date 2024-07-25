@@ -7,18 +7,17 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class GetProjectResponse {
-    private Long id;
-
+@AllArgsConstructor
+public class CreateCategoryResponse {
     private String name;
 
-    private String pathSource;
+    private String species;
 
-    private String pathSave;
+    private String img;
 
-    private Long userId;
+    private String classType;
 
-    private Boolean isActive;
+    private String type;
+
 }

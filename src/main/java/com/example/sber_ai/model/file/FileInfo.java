@@ -1,11 +1,13 @@
 package com.example.sber_ai.model.file;
 
+import com.example.sber_ai.model.entity.Category;
 import com.example.sber_ai.model.entity.Image;
-import com.example.sber_ai.model.entity.Project;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,6 +18,12 @@ public class FileInfo {
     private String path;
 
     private String minioUrl;
+
+    private String category;
+
+    private Integer animalCount;
+
+    private Double threshold;
 
     private int originalWidth;
 
@@ -32,21 +40,30 @@ public class FileInfo {
         this.originalHeight = originalHeight;
     }
 
-    @Override
-    public String toString() {
-        return "FileInfo {" +
-                "name='" + name + '\'' +
-                ", path='" + path + '\'' +
-                ", minioUrl='" + minioUrl + '\'' +
-                "}\n";
-    }
-
-    public Image toEntity(FileInfo fileInfo, Project projectId) {
+    public Image toEntity(FileInfo fileInfo, List<Category> categories) {
         Image image = new Image();
         image.setName(fileInfo.getName());
         image.setPath(fileInfo.getPath());
         image.setMinioUrl(fileInfo.getMinioUrl());
-        image.setProjectId(projectId);
+        image.setCategoryId(categories.stream().filter(dbCategory -> dbCategory.getType().equals(fileInfo.getCategory())).findFirst().orElse(null));
+        image.setAnimalCount(fileInfo.getAnimalCount());
+        image.setThreshold(fileInfo.getThreshold());
+        image.setCategory(image.getCategoryId().getType());
         return image;
     }
+
+    @Override
+    public String toString() {
+        return "FileInfo{" +
+                "name='" + name + '\'' +
+                ", path='" + path + '\'' +
+                ", minioUrl='" + minioUrl + '\'' +
+                ", category='" + category + '\'' +
+                ", animalCount=" + animalCount +
+                ", threshold=" + threshold +
+                ", originalWidth=" + originalWidth +
+                ", originalHeight=" + originalHeight +
+                '}';
+    }
+
 }

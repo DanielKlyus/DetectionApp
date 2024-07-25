@@ -30,11 +30,16 @@
 		<java.version>17</java.version>
 		<okhttp.version>4.10.0</okhttp.version>
 		<commons-io.version>2.15.1</commons-io.version>
-		<modelmapper.version>3.1.1</modelmapper.version>
+		<modelmapper.version>3.2.0</modelmapper.version>
 		<mockito-core.version>5.11.0</mockito-core.version>
 		<mockwebserver.version>4.12.0</mockwebserver.version>
 		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
 		<minio-version>8.5.2</minio-version>
+		<hibernate.version>6.5.2.Final</hibernate.version>
+		<postgresql.version>42.7.2</postgresql.version>
+		<mapstruct.version>1.5.5.Final</mapstruct.version>
+		<mapstruct-processor.version>1.5.5.Final</mapstruct-processor.version>
+		<icu4j.version>75.1</icu4j.version>
 	</properties>
 
 	<dependencies>
@@ -83,6 +88,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>${modelmapper.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>${commons-io.version}</version>
@@ -91,26 +102,26 @@
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
-			<version>1.5.5.Final</version>
+			<version>${mapstruct.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct-processor</artifactId>
-			<version>1.5.5.Final</version>
+			<version>${mapstruct-processor.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.7.2</version>
+			<version>${postgresql.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>6.5.2.Final</version>
+			<version>${hibernate.version}</version>
 		</dependency>
 
 		<dependency>
@@ -122,6 +133,12 @@
 			<groupId>io.minio</groupId>
 			<artifactId>minio</artifactId>
 			<version>${minio-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.icu</groupId>
+			<artifactId>icu4j</artifactId>
+			<version>${icu4j.version}</version>
 		</dependency>
 
 	</dependencies>

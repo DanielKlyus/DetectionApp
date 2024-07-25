@@ -20,5 +20,5 @@ public class CreateProjectResponse {
 
     private Long userId;
 
-    private boolean isActive;
+    private Boolean isActive;
 }

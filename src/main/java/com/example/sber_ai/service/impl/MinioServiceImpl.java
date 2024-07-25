@@ -5,6 +5,7 @@ import com.example.sber_ai.exception.CreateBucketException;
 import com.example.sber_ai.exception.ImageException;
 import com.example.sber_ai.model.file.FileInfo;
 import com.example.sber_ai.service.MinioService;
+import com.ibm.icu.text.Transliterator;
 import io.minio.*;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
@@ -19,19 +20,30 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RequiredArgsConstructor
 public class MinioServiceImpl implements MinioService {
+    private static final Transliterator toLatinTrans = Transliterator.getInstance("Russian-Latin/BGN");
 
     private final MinioClient minioClient;
 
+    public static String transliterateAndFormat(String text) {
+        String transliterated = toLatinTrans.transliterate(text);
+        return transliterated.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
+    }
+
     @Override
     public void uploadSourceFiles(List<FileInfo> files, String projectName) {
+        if (!projectName.matches("[a-zA-Z0-9]+")){
+            projectName = transliterateAndFormat(projectName);
+        }
+
         if (!createBucket(projectName)) {
             log.error("Cannot create bucket: {}", projectName);
         }
 
+        String finalProjectName = projectName;
         files.forEach(fileInfo -> {
             try {
                 minioClient.putObject(PutObjectArgs.builder()
-                        .bucket(projectName)
+                        .bucket(finalProjectName)
                         .object(fileInfo.getName())
                         .stream(fileInfo.getFile().getInputStream(), fileInfo.getFile().getSize(), -1)
                         .build());
@@ -39,7 +51,7 @@ public class MinioServiceImpl implements MinioService {
                 fileInfo.setMinioUrl(minioClient.getPresignedObjectUrl(
                         GetPresignedObjectUrlArgs.builder()
                                 .method(Method.GET)
-                                .bucket(projectName)
+                                .bucket(finalProjectName)
                                 .object(fileInfo.getName())
                                 .expiry(10, TimeUnit.MINUTES)
                                 .build()));

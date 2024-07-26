@@ -26,12 +26,12 @@ public class MinioServiceImpl implements MinioService {
 
     public static String transliterateAndFormat(String text) {
         String transliterated = toLatinTrans.transliterate(text);
-        return transliterated.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
+        return transliterated.toLowerCase().replaceAll("[^a-z0-9]", "");
     }
 
     @Override
     public void uploadSourceFiles(List<FileInfo> files, String projectName) {
-        if (!projectName.matches("[a-zA-Z0-9]+")){
+        if (!projectName.matches("[a-z0-9]+")){
             projectName = transliterateAndFormat(projectName);
         }
 

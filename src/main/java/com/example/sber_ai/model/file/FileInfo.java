@@ -48,7 +48,6 @@ public class FileInfo {
         image.setCategoryId(categories.stream().filter(dbCategory -> dbCategory.getType().equals(fileInfo.getCategory())).findFirst().orElse(null));
         image.setAnimalCount(fileInfo.getAnimalCount());
         image.setThreshold(fileInfo.getThreshold());
-        image.setCategory(image.getCategoryId().getType());
         return image;
     }
 

@@ -30,9 +30,6 @@ public class Image {
     @Column(name = "datetime", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private LocalDateTime dateTime;
 
-    @Column(name = "category")
-    private String category;
-
     @Column(name = "animal_count")
     private Integer animalCount;
 
@@ -48,4 +45,5 @@ public class Image {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category categoryId;
+
 }

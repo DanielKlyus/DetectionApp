@@ -66,6 +66,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
         categoryRepository.saveAll(defaultCategories.getCategories());
 
+        log.info("Project with name {} created", project.getName());
         return projectMapper.mapToResponse(project);
     }
 
@@ -93,12 +94,12 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public CreateCategoryResponse createCategory(CreateCategoryRequest createCategoryRequest, Long projectId) {
         String categoryUrl = imageService.uploadFile(createCategoryRequest.getImg());
-        log.info("Category with type {} uploaded", createCategoryRequest.getName());
 
         Project project = projectRepository.findByIsActiveAndId(true, projectId);
         Category category = categoryMapper.mapToEntity(createCategoryRequest, categoryUrl, project);
         categoryRepository.save(category);
 
+        log.info("Category with type {} uploaded", category.getName());
         return categoryMapper.mapToResponse(category);
     }
 
@@ -119,6 +120,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void initProject(Long id) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new ProjectException("Project with id " + id + " not found"));
         imageService.uploadSourceFiles(project.getPathSource(), project.getName(), project.getPathSave());
+        log.info("Project with id {} started", id);
     }
 
     @Override
@@ -135,5 +137,12 @@ public class ProjectServiceImpl implements ProjectService {
         image.setCategoryId(category);
         image.setThreshold(1.0);
         imageRepository.save(image);
+        log.info("Image with id {} changed to category with id {}", imageId, newCategoryId);
+    }
+
+    @Override
+    public void deleteCategory(Long categoryId) {
+        categoryRepository.deleteById(categoryId);
+        log.info("Category with id {} deleted", categoryId);
     }
 }

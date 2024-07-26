@@ -106,7 +106,7 @@ public class ProjectServiceImpl implements ProjectService {
     public List<GetImageResponse> getCategoryImages(Long projectId, Long categoryId) {
         Optional<Category> category = categoryRepository.findById(categoryId);
         if (category.isPresent()) {
-            return imageRepository.findAllByCategory(category.get().getType()).stream()
+            return imageRepository.findAllByCategoryId(category.get()).stream()
                     .map(image -> modelMapper.map(image, GetImageResponse.class))
                     .toList();
         } else {

@@ -136,4 +136,10 @@ public class ProjectServiceImpl implements ProjectService {
         image.setThreshold(1.0);
         imageRepository.save(image);
     }
+
+    @Override
+    public void deleteCategory(Long categoryId) {
+        categoryRepository.deleteById(categoryId);
+        log.info("Category with id {} deleted", categoryId);
+    }
 }

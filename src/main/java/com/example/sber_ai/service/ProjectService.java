@@ -1,6 +1,5 @@
 package com.example.sber_ai.service;
 
-import com.example.sber_ai.model.entity.Category;
 import com.example.sber_ai.model.request.CreateCategoryRequest;
 import com.example.sber_ai.model.request.CreateProjectRequest;
 import com.example.sber_ai.model.response.*;
@@ -23,4 +22,6 @@ public interface ProjectService {
     List<GetCategoriesResponse> getCategories(Long projectId);
 
     void changeCategory(Long imageId, Long newCategoryId);
+
+    void deleteCategory(Long categoryId);
 }

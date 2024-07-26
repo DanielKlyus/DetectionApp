@@ -57,4 +57,10 @@ public class ProjectController {
         projectService.changeCategory(imageId, newCategoryId);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{projectId}/categories/{categoryId}/delete")
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long projectId, @PathVariable Long categoryId) {
+        projectService.deleteCategory(categoryId);
+        return ResponseEntity.ok().build();
+    }
 }

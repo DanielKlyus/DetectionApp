@@ -49,5 +49,4 @@ public class ProjectController {
     public List<GetImageResponse> getCategoryImages(@PathVariable Long projectId, @PathVariable Long categoryId) {
         return projectService.getCategoryImages(projectId, categoryId);
     }
-
 }

@@ -24,7 +24,7 @@ public class Image {
     @Column(name = "path")
     private String path;
 
-    @Column(name = "minio_url", length = 350)
+    @Column(name = "minio_url", length = 450)
     private String minioUrl;
 
     @Column(name = "datetime", columnDefinition = "TIMESTAMP WITH TIME ZONE")

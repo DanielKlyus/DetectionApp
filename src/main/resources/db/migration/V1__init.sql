@@ -1,11 +1,11 @@
-CREATE TABLE users
+CREATE TABLE IF NOT EXISTS users
 (
     "id"       BIGSERIAL PRIMARY KEY NOT NULL,
     "name"     TEXT                  NOT NULL,
     "is_admin" BOOLEAN               NOT NULL
 );
 
-CREATE TABLE projects
+CREATE TABLE IF NOT EXISTS projects
 (
     "id"          BIGSERIAL PRIMARY KEY NOT NULL,
     "name"        TEXT                  NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE projects
     CONSTRAINT fk_projects_user FOREIGN KEY ("user_id") REFERENCES users ("id")
 );
 
-CREATE TABLE categories
+CREATE TABLE IF NOT EXISTS categories
 (
     "id"         BIGSERIAL PRIMARY KEY NOT NULL,
     "name"       TEXT                  NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE categories
     CONSTRAINT fk_categories_project FOREIGN KEY ("project_id") REFERENCES projects ("id")
 );
 
-CREATE TABLE images
+CREATE TABLE IF NOT EXISTS images
 (
     "id"                      BIGSERIAL PRIMARY KEY NOT NULL,
     "name"                    TEXT                  NOT NULL,

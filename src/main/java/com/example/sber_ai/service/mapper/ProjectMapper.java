@@ -9,8 +9,6 @@ import com.example.sber_ai.model.response.GetProjectResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
 public interface ProjectMapper {
     @Mapping(source = "user.id", target = "userId")

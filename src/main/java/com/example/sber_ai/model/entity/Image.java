@@ -46,7 +46,6 @@ public class Image {
     @JoinColumn(name = "category_id")
     private Category categoryId;
 
-<<<<<<< 935a88ee1162db41755be0c757fa48f2b326d1be
     @PrePersist
     public void prePersist() {
         if (this.animalCountInPassage == null) {
@@ -56,6 +55,4 @@ public class Image {
             this.passage = 0;
         }
     }
-=======
->>>>>>> 5edd9da407a13a2e9d7645d8d52fc6b9a499a1d5
 }

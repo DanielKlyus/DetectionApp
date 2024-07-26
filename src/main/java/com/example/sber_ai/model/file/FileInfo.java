@@ -57,7 +57,6 @@ public class FileInfo {
                 "name='" + name + '\'' +
                 ", path='" + path + '\'' +
                 ", minioUrl='" + minioUrl + '\'' +
-                ", category='" + category + '\'' +
                 ", animalCount=" + animalCount +
                 ", threshold=" + threshold +
                 ", originalWidth=" + originalWidth +

@@ -25,8 +25,8 @@ public class Category {
     @Column(name = "img", columnDefinition = "TEXT", length = 350)
     private String img;
 
-    @Column(name = "class")
-    private String classType;
+    @Column(name = "class", nullable = false, columnDefinition = "TEXT DEFAULT 'animal'")
+    private String classType = "animal";
 
     @Column(name = "type")
     private String type;
@@ -40,5 +40,12 @@ public class Category {
         this.species = species;
         this.classType = classType;
         this.type = type;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.classType == null) {
+            this.classType = "animal";
+        }
     }
 }

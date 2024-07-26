@@ -2,10 +2,7 @@ package com.example.sber_ai.controller;
 
 import com.example.sber_ai.model.request.CreateCategoryRequest;
 import com.example.sber_ai.model.request.CreateProjectRequest;
-import com.example.sber_ai.model.response.CreateCategoryResponse;
-import com.example.sber_ai.model.response.CreateProjectResponse;
-import com.example.sber_ai.model.response.GetImageResponse;
-import com.example.sber_ai.model.response.GetProjectResponse;
+import com.example.sber_ai.model.response.*;
 import com.example.sber_ai.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -48,5 +45,16 @@ public class ProjectController {
     @GetMapping("/{projectId}/categories/{categoryId}")
     public List<GetImageResponse> getCategoryImages(@PathVariable Long projectId, @PathVariable Long categoryId) {
         return projectService.getCategoryImages(projectId, categoryId);
+    }
+
+    @GetMapping("/{projectId}/categories/get")
+    public List<GetCategoriesResponse> getCategories(@PathVariable Long projectId) {
+        return projectService.getCategories(projectId);
+    }
+
+    @PostMapping("/{projectId}/categories/{categoryId}/image/{imageId}/change")
+    public ResponseEntity<Void> changeCategory(@PathVariable Long projectId, @PathVariable Long categoryId, @PathVariable Long imageId, @RequestParam Long newCategoryId) {
+        projectService.changeCategory(imageId, newCategoryId);
+        return ResponseEntity.ok().build();
     }
 }

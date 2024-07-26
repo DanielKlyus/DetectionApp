@@ -1,11 +1,9 @@
 package com.example.sber_ai.service;
 
+import com.example.sber_ai.model.entity.Category;
 import com.example.sber_ai.model.request.CreateCategoryRequest;
 import com.example.sber_ai.model.request.CreateProjectRequest;
-import com.example.sber_ai.model.response.CreateCategoryResponse;
-import com.example.sber_ai.model.response.CreateProjectResponse;
-import com.example.sber_ai.model.response.GetImageResponse;
-import com.example.sber_ai.model.response.GetProjectResponse;
+import com.example.sber_ai.model.response.*;
 
 import java.util.List;
 
@@ -21,4 +19,8 @@ public interface ProjectService {
     List<GetImageResponse> getCategoryImages(Long projectId, Long categoryId);
 
     void initProject(Long id);
+
+    List<GetCategoriesResponse> getCategories(Long projectId);
+
+    void changeCategory(Long imageId, Long newCategoryId);
 }

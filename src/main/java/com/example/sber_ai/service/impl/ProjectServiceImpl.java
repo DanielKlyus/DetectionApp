@@ -1,15 +1,14 @@
 package com.example.sber_ai.service.impl;
 
 import com.example.sber_ai.exception.CategoryException;
+import com.example.sber_ai.exception.ImageException;
 import com.example.sber_ai.exception.ProjectException;
 import com.example.sber_ai.model.entity.Category;
+import com.example.sber_ai.model.entity.Image;
 import com.example.sber_ai.model.entity.Project;
 import com.example.sber_ai.model.request.CreateCategoryRequest;
 import com.example.sber_ai.model.request.CreateProjectRequest;
-import com.example.sber_ai.model.response.CreateCategoryResponse;
-import com.example.sber_ai.model.response.CreateProjectResponse;
-import com.example.sber_ai.model.response.GetImageResponse;
-import com.example.sber_ai.model.response.GetProjectResponse;
+import com.example.sber_ai.model.response.*;
 import com.example.sber_ai.repository.CategoryRepository;
 import com.example.sber_ai.repository.ImageRepository;
 import com.example.sber_ai.repository.ProjectRepository;
@@ -119,5 +118,21 @@ public class ProjectServiceImpl implements ProjectService {
     public void initProject(Long id) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new ProjectException("Project with id " + id + " not found"));
         imageService.uploadSourceFiles(project.getPathSource(), project.getName(), project.getPathSave());
+    }
+
+    @Override
+    public List<GetCategoriesResponse> getCategories(Long projectId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectException("Project with id " + projectId + " not found"));
+        List<Category> categories = categoryRepository.findAllByProjectId(project);
+        return categories.stream().map(projectMapper::mapToGetCategoriesResponse).toList();
+    }
+
+    @Override
+    public void changeCategory(Long imageId, Long newCategoryId) {
+        Image image = imageRepository.findById(imageId).orElseThrow(() -> new ImageException("Image with id " + imageId + " not found"));
+        Category category = categoryRepository.findById(newCategoryId).orElseThrow(() -> new CategoryException("Category with id " + newCategoryId + " not found"));
+        image.setCategoryId(category);
+        image.setThreshold(1.0);
+        imageRepository.save(image);
     }
 }

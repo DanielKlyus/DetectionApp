@@ -36,11 +36,10 @@ CREATE TABLE images
     "path"                    TEXT                  NOT NULL,
     "category_id"             BIGINT                NOT NULL,
     "minio_url"               TEXT                  NOT NULL,
-    "datetime"                TIMESTAMP             NOT NULL,
-    "category"                TEXT,
+    "datetime"                TIMESTAMP,
     "animal_count"            INTEGER               NOT NULL,
-    "passage"                 INTEGER               NOT NULL,
-    "animal_count_in_passage" INTEGER               NOT NULL,
+    "passage"                 INTEGER               NOT NULL DEFAULT 0,
+    "animal_count_in_passage" INTEGER               NOT NULL DEFAULT 0,
     "threshold"               REAL                  NOT NULL,
     CONSTRAINT fk_images_project FOREIGN KEY ("category_id") REFERENCES categories ("id")
 );

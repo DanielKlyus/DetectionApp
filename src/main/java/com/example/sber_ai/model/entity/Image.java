@@ -33,11 +33,11 @@ public class Image {
     @Column(name = "animal_count")
     private Integer animalCount;
 
-    @Column(name = "passage")
-    private Integer passage;
+    @Column(name = "passage", nullable = false, columnDefinition = "INTEGER DEFAULT 0")
+    private Integer passage = 0;
 
-    @Column(name = "animal_count_in_passage")
-    private Integer animalCountInPassage;
+    @Column(name = "animal_count_in_passage", nullable = false, columnDefinition = "INTEGER DEFAULT 0")
+    private Integer animalCountInPassage = 0;
 
     @Column(name = "threshold")
     private Double threshold;
@@ -46,4 +46,16 @@ public class Image {
     @JoinColumn(name = "category_id")
     private Category categoryId;
 
+<<<<<<< 935a88ee1162db41755be0c757fa48f2b326d1be
+    @PrePersist
+    public void prePersist() {
+        if (this.animalCountInPassage == null) {
+            this.animalCountInPassage = 0;
+        }
+        if (this.passage == null) {
+            this.passage = 0;
+        }
+    }
+=======
+>>>>>>> 5edd9da407a13a2e9d7645d8d52fc6b9a499a1d5
 }

@@ -93,6 +93,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public CreateCategoryResponse createCategory(CreateCategoryRequest createCategoryRequest, Long projectId) {
         String categoryUrl = imageService.uploadFile(createCategoryRequest.getImg());
+        log.info("Category with type {} uploaded", createCategoryRequest.getName());
 
         Project project = projectRepository.findByIsActiveAndId(true, projectId);
         Category category = categoryMapper.mapToEntity(createCategoryRequest, categoryUrl, project);

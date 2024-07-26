@@ -90,6 +90,8 @@ public class ImageServiceImpl implements ImageService {
 
         files.forEach(fileInfo -> {
             Optional<ServerResponse> response = imageSender.sendImageToML(fileInfo.getPath());
+            log.info("\nServer response: {}", response);
+
 
             response.ifPresent(serverResponse -> {
                 BufferedImage image = imageDrawer.convertMultipartFileToBufferedImage(fileInfo.getFile());

@@ -17,7 +17,7 @@ public interface ProjectService {
 
     List<GetImageResponse> getCategoryImages(Long projectId, Long categoryId);
 
-    void initProject(Long id);
+    void startProject(Long projectId);
 
     List<GetCategoriesResponse> getCategories(Long projectId);
 

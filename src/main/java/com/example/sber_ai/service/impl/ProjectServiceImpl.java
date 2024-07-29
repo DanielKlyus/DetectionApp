@@ -71,6 +71,13 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public void startProject(Long id) {
+        Project project = projectRepository.findById(id).orElseThrow(() -> new ProjectException("Project with id " + id + " not found"));
+        imageService.uploadSourceFiles(project.getPathSource(), project.getName(), project.getPathSave());
+        log.info("Project with id {} started", id);
+    }
+
+    @Override
     public GetProjectResponse getProject(Long id) {
         Optional<Project> project = projectRepository.findById(id);
         if (project.isPresent()) {
@@ -114,13 +121,6 @@ public class ProjectServiceImpl implements ProjectService {
             log.error("Cannot find category with id {}", categoryId);
             throw new CategoryException("Cannot find category with id ", categoryId);
         }
-    }
-
-    @Override
-    public void initProject(Long id) {
-        Project project = projectRepository.findById(id).orElseThrow(() -> new ProjectException("Project with id " + id + " not found"));
-        imageService.uploadSourceFiles(project.getPathSource(), project.getName(), project.getPathSave());
-        log.info("Project with id {} started", id);
     }
 
     @Override

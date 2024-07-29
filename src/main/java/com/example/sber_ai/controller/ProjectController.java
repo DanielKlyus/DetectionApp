@@ -21,15 +21,15 @@ public class ProjectController {
         return projectService.createProject(createProjectRequest);
     }
 
-    @GetMapping("/{id}/start")
-    public ResponseEntity<Void> initProject(@PathVariable Long id) {
-        projectService.initProject(id);
+    @GetMapping("/{projectId}/start")
+    public ResponseEntity<Void> startProject(@PathVariable Long projectId) {
+        projectService.startProject(projectId);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{id}/get")
-    public GetProjectResponse getProject(@PathVariable Long id) {
-        return projectService.getProject(id);
+    @GetMapping("/{projectId}/get")
+    public GetProjectResponse getProject(@PathVariable Long projectId) {
+        return projectService.getProject(projectId);
     }
 
     @GetMapping("/get/from/{userId}")

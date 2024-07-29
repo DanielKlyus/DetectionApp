@@ -22,4 +22,3 @@ public class ResultJson implements Serializable {
 
     private Integer animalsCount;
 }
-

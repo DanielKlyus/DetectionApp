@@ -3,6 +3,7 @@ package com.example.sber_ai.service.impl;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.example.sber_ai.exception.CategoryException;
 import com.example.sber_ai.exception.ImageException;
 import com.example.sber_ai.model.entity.Category;
 import com.example.sber_ai.model.entity.Image;
@@ -32,10 +33,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 @Service
@@ -57,14 +56,6 @@ public class ImageServiceImpl implements ImageService {
     private final MinioService minioService;
 
     private final ObjectMapper objectMapper;
-
-//    @Setter
-//    @Getter
-//    private class ImageSeries {
-//        private Integer passage;
-//
-//        private Integer countInPassage;
-//    }
 
     @Override
     public void uploadSourceFiles(String directoryPath, String projectName, String pathSave) {
@@ -92,11 +83,61 @@ public class ImageServiceImpl implements ImageService {
     public void saveAll(List<FileInfo> files, String projectName) {
         Project project = projectRepository.findByName(projectName);
         List<Category> categories = categoryRepository.findAllByProjectId(project);
+        List<Image> images = new ArrayList<>();
         files.forEach(fileInfo -> {
             Image image = fileInfo.toEntity(fileInfo, categories);
-            imageRepository.save(image);
-            log.info("Image {} saved with category {}", fileInfo.getName(), fileInfo.getCategory());
+            if (image.getDateTime() != null) {
+                images.add(image);
+            } else imageRepository.save(image);
         });
+        List<Image> updatedImages = countSeries(images);
+        updatedImages.forEach(image -> {
+            imageRepository.save(image);
+            Category category = categoryRepository.findById(image.getId()).orElseThrow(() -> new CategoryException("Category not found"));
+            log.info("Image {} saved with category {}", image.getName(), category.getName());
+        });
+    }
+
+    @Override
+    public List<Image> countSeries(List<Image> images) {
+        images.sort(new Comparator<Image>() {
+            @Override
+            public int compare(Image i1, Image i2) {
+                return i1.getDateTime().compareTo(i2.getDateTime());
+            }
+        });
+        int currentPassage = 0;
+        int maxAnimals = 0;
+        Stack<Image> stack = new Stack<>();
+        for (Image image : images) {
+            if (stack.isEmpty()) {
+                // Начало проходов
+                currentPassage++;
+                image.setPassage(currentPassage);
+                maxAnimals = image.getAnimalCount();
+                stack.push(image);
+            } else if (image.getCategoryId() != stack.peek().getCategoryId() ||
+                    image.getDateTime().getTime() - stack.peek().getDateTime().getTime() > TimeUnit.MINUTES.toMillis(30)) {
+                // Завершение текущего прохода
+                while (!stack.isEmpty()) {
+                    stack.pop().setAnimalCountInPassage(maxAnimals);
+                }
+                currentPassage++;
+                maxAnimals = image.getAnimalCount();
+                image.setPassage(currentPassage);
+                stack.push(image);
+            } else {
+                // Продолжение текущего прохода
+                image.setPassage(currentPassage);
+                maxAnimals = Math.max(maxAnimals, image.getAnimalCount());
+                stack.push(image);
+            }
+        }
+        // Завершение последнего прохода
+        while (!stack.isEmpty()) {
+            stack.pop().setAnimalCountInPassage(maxAnimals);
+        }
+        return images;
     }
 
     protected List<FileInfo> processImages(String directoryPath) {

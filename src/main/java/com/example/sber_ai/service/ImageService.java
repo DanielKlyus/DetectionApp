@@ -1,11 +1,16 @@
 package com.example.sber_ai.service;
 
+import com.example.sber_ai.model.entity.Image;
 import com.example.sber_ai.model.file.FileInfo;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface ImageService {
+
     void uploadSourceFiles(String directoryPath, String projectName, String pathSave);
 
     void saveAll(List<FileInfo> files, String projectName);
@@ -14,5 +19,5 @@ public interface ImageService {
 
     String getMinioCategoryUrl(String categoryType);
 
-//    void getDatetime();
+    List<Image> countSeries(List<Image> images);
 }

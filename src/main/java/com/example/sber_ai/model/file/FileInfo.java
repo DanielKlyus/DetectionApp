@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -20,6 +21,8 @@ public class FileInfo {
     private String minioUrl;
 
     private String category;
+
+    private Date dateTime;
 
     private Integer animalCount;
 
@@ -44,6 +47,7 @@ public class FileInfo {
         Image image = new Image();
         image.setName(fileInfo.getName());
         image.setPath(fileInfo.getPath());
+        image.setDateTime(fileInfo.getDateTime());
         image.setMinioUrl(fileInfo.getMinioUrl());
         image.setCategoryId(categories.stream().filter(dbCategory -> dbCategory.getType().equals(fileInfo.getCategory())).findFirst().orElse(null));
         image.setAnimalCount(fileInfo.getAnimalCount());
@@ -56,6 +60,7 @@ public class FileInfo {
         return "FileInfo{" +
                 "name='" + name + '\'' +
                 ", path='" + path + '\'' +
+                ", dateTime=" + dateTime +
                 ", minioUrl='" + minioUrl + '\'' +
                 ", animalCount=" + animalCount +
                 ", threshold=" + threshold +

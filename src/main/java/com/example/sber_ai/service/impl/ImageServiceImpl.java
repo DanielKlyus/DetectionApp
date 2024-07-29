@@ -1,7 +1,11 @@
 package com.example.sber_ai.service.impl;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.example.sber_ai.exception.ImageException;
 import com.example.sber_ai.model.entity.Category;
+import com.example.sber_ai.model.entity.Image;
 import com.example.sber_ai.model.entity.Project;
 import com.example.sber_ai.model.file.FileInfo;
 import com.example.sber_ai.model.response.ServerResponse;
@@ -29,6 +33,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -52,6 +57,14 @@ public class ImageServiceImpl implements ImageService {
     private final MinioService minioService;
 
     private final ObjectMapper objectMapper;
+
+//    @Setter
+//    @Getter
+//    private class ImageSeries {
+//        private Integer passage;
+//
+//        private Integer countInPassage;
+//    }
 
     @Override
     public void uploadSourceFiles(String directoryPath, String projectName, String pathSave) {
@@ -80,7 +93,8 @@ public class ImageServiceImpl implements ImageService {
         Project project = projectRepository.findByName(projectName);
         List<Category> categories = categoryRepository.findAllByProjectId(project);
         files.forEach(fileInfo -> {
-            imageRepository.save(fileInfo.toEntity(fileInfo, categories));
+            Image image = fileInfo.toEntity(fileInfo, categories);
+            imageRepository.save(image);
             log.info("Image {} saved with category {}", fileInfo.getName(), fileInfo.getCategory());
         });
     }
@@ -113,6 +127,12 @@ public class ImageServiceImpl implements ImageService {
                             .stream()
                             .min(Double::compare)
                             .orElse(minMlThreshold));
+                    try {
+                        Date dateTime = extractDateTimeFromImage(new File(fileInfo.getPath()));
+                        fileInfo.setDateTime(dateTime);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
 
                 } else if (!megadetectorPredict.getLabels().isEmpty()) {
                     log.info("Megadetector predict labels for animal {} with file name {}: {}", fileInfo.getPath(), fileInfo.getName(), megadetectorPredict.getLabels());
@@ -122,11 +142,23 @@ public class ImageServiceImpl implements ImageService {
                             .stream()
                             .min(Double::compare)
                             .orElse(minMlThreshold));
+                    try {
+                        Date dateTime = extractDateTimeFromImage(new File(fileInfo.getPath()));
+                        fileInfo.setDateTime(dateTime);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
 
                 } else {
                     fileInfo.setCategory("empty");
                     fileInfo.setAnimalCount(0);
                     fileInfo.setThreshold(minMlThreshold);
+                    try {
+                        Date dateTime = extractDateTimeFromImage(new File(fileInfo.getPath()));
+                        fileInfo.setDateTime(dateTime);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
         });
@@ -171,5 +203,16 @@ public class ImageServiceImpl implements ImageService {
         }
 
         return result;
+    }
+
+    protected static Date extractDateTimeFromImage(File imageFile) throws Exception {
+        Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
+        ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+
+        if (directory != null) {
+            return directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+        } else {
+            return null;
+        }
     }
 }

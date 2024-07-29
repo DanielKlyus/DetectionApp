@@ -3,8 +3,6 @@ package com.example.sber_ai.service;
 import com.example.sber_ai.model.entity.Image;
 import com.example.sber_ai.model.file.FileInfo;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

@@ -119,6 +119,12 @@ public class ImageServiceImpl implements ImageService {
                 double minMlThreshold = 0.3;
                 ServerResponse.SpeciesPredict speciesPredict = response.get().getSpeciesPredict();
                 ServerResponse.MegadetectorPredict megadetectorPredict = response.get().getMegadetectorPredict();
+                try {
+                    Date dateTime = extractDateTimeFromImage(new File(fileInfo.getPath()));
+                    fileInfo.setDateTime(dateTime);
+                } catch (Exception e) {
+                    throw new ImageException("Cannot extract date time from file: " + fileInfo.getPath());
+                }
                 if (!speciesPredict.getLabels().isEmpty()) {
                     log.info("Species predict labels for animal {} with file name {}: {}", fileInfo.getPath(), fileInfo.getName(), speciesPredict.getLabels());
                     fileInfo.setCategory(speciesPredict.getLabels().get(0));
@@ -127,12 +133,6 @@ public class ImageServiceImpl implements ImageService {
                             .stream()
                             .min(Double::compare)
                             .orElse(minMlThreshold));
-                    try {
-                        Date dateTime = extractDateTimeFromImage(new File(fileInfo.getPath()));
-                        fileInfo.setDateTime(dateTime);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
 
                 } else if (!megadetectorPredict.getLabels().isEmpty()) {
                     log.info("Megadetector predict labels for animal {} with file name {}: {}", fileInfo.getPath(), fileInfo.getName(), megadetectorPredict.getLabels());
@@ -142,23 +142,11 @@ public class ImageServiceImpl implements ImageService {
                             .stream()
                             .min(Double::compare)
                             .orElse(minMlThreshold));
-                    try {
-                        Date dateTime = extractDateTimeFromImage(new File(fileInfo.getPath()));
-                        fileInfo.setDateTime(dateTime);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
 
                 } else {
                     fileInfo.setCategory("empty");
                     fileInfo.setAnimalCount(0);
                     fileInfo.setThreshold(minMlThreshold);
-                    try {
-                        Date dateTime = extractDateTimeFromImage(new File(fileInfo.getPath()));
-                        fileInfo.setDateTime(dateTime);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
                 }
             });
         });
@@ -182,7 +170,7 @@ public class ImageServiceImpl implements ImageService {
                             originalWidth = originalImage.getWidth();
                             originalHeight = originalImage.getHeight();
                         } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            throw new ImageException("Cannot read file: " + file.getPath());
                         }
 
                         imageDrawer.resizeImage(file);

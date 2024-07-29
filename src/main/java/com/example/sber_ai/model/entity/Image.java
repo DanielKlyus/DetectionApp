@@ -3,7 +3,7 @@ package com.example.sber_ai.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Builder
 @NoArgsConstructor
@@ -28,7 +28,7 @@ public class Image {
     private String minioUrl;
 
     @Column(name = "datetime", columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    private LocalDateTime dateTime;
+    private Date dateTime;
 
     @Column(name = "animal_count")
     private Integer animalCount;

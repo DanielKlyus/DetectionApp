@@ -14,4 +14,5 @@ public interface ImageService {
 
     String getMinioCategoryUrl(String categoryType);
 
+//    void getDatetime();
 }

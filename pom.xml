@@ -40,6 +40,7 @@
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<mapstruct-processor.version>1.5.5.Final</mapstruct-processor.version>
 		<icu4j.version>75.1</icu4j.version>
+		<metadata-extractor-version>2.18.0</metadata-extractor-version>
 	</properties>
 
 	<dependencies>
@@ -140,6 +141,13 @@
 			<artifactId>icu4j</artifactId>
 			<version>${icu4j.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.drewnoakes</groupId>
+			<artifactId>metadata-extractor</artifactId>
+			<version>${metadata-extractor-version}</version>
+		</dependency>
+
 
 	</dependencies>
 

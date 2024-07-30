@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/home")
 public class UserController {
     private final UserService userService;
 
     @PostMapping("/create")
     public CreateUserResponse createUser(@RequestBody CreateUserRequest createUserRequest) {
-        return userService.createUser(createUserRequest);
+        return userService.create(createUserRequest);
     }
 }

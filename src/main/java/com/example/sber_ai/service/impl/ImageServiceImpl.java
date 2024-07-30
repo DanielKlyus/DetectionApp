@@ -66,6 +66,17 @@ public class ImageServiceImpl implements ImageService {
 //        private Integer countInPassage;
 //    }
 
+    protected static Date extractDateTimeFromImage(File imageFile) throws Exception {
+        Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
+        ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+
+        if (directory != null) {
+            return directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public void uploadSourceFiles(String directoryPath, String projectName, String pathSave) {
         List<FileInfo> resultImages = processImages(directoryPath);
@@ -159,7 +170,10 @@ public class ImageServiceImpl implements ImageService {
 
         try (Stream<Path> pathStream = Files.walk(Path.of(directoryPath))) {
             pathStream
-                    .filter(Files::isRegularFile)
+                    .filter(path -> {
+                        String fileName = path.getFileName().toString().toLowerCase();
+                        return fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png");
+                    })
                     .forEach(path -> {
                         File file = path.toFile();
 
@@ -191,16 +205,5 @@ public class ImageServiceImpl implements ImageService {
         }
 
         return result;
-    }
-
-    protected static Date extractDateTimeFromImage(File imageFile) throws Exception {
-        Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
-        ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
-
-        if (directory != null) {
-            return directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
-        } else {
-            return null;
-        }
     }
 }

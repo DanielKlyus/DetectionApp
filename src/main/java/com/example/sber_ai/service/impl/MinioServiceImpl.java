@@ -31,7 +31,7 @@ public class MinioServiceImpl implements MinioService {
 
     @Override
     public void uploadSourceFiles(List<FileInfo> files, String projectName) {
-        if (!projectName.matches("[a-z0-9]+")){
+        if (!projectName.matches("[a-z0-9]+")) {
             projectName = transliterateAndFormat(projectName);
         }
 

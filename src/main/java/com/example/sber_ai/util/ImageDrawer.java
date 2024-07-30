@@ -77,6 +77,13 @@ public class ImageDrawer {
         final int maxWidth = 1333;
         final int maxHeight = 800;
 
+        File tempDir = new File(image.getParentFile(), "temp");
+        if (!tempDir.exists()) {
+            tempDir.mkdirs();
+        }
+
+        File outputFile = new File(tempDir, image.getName());
+
         try {
             BufferedImage originalImage = ImageIO.read(image);
 
@@ -102,7 +109,7 @@ public class ImageDrawer {
 
                 String imageFormat = image.getName().substring(image.getName().lastIndexOf(".") + 1);
 
-                ImageIO.write(resizedImage, imageFormat, image);
+                ImageIO.write(resizedImage, imageFormat, outputFile);
             }
         } catch (IOException e) {
             log.error("Cannot resize image {}: {}", image.getPath(), e.getMessage());

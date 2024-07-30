@@ -2,6 +2,7 @@ package com.example.sber_ai.model.file;
 
 import com.example.sber_ai.model.entity.Category;
 import com.example.sber_ai.model.entity.Image;
+import com.example.sber_ai.service.mapper.ImageMapper;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,24 +36,18 @@ public class FileInfo {
     @JsonIgnore
     private MultipartFile file;
 
-    public FileInfo(String name, String path, MultipartFile file, int originalWidth, int originalHeight) {
+    public FileInfo(String name, String path, MultipartFile file, Date dateTime, int originalWidth, int originalHeight) {
         this.name = name;
         this.path = path;
         this.file = file;
+        this.dateTime = dateTime;
         this.originalWidth = originalWidth;
         this.originalHeight = originalHeight;
     }
 
     public Image toEntity(FileInfo fileInfo, List<Category> categories) {
-        Image image = new Image();
-        image.setName(fileInfo.getName());
-        image.setPath(fileInfo.getPath());
-        image.setDateTime(fileInfo.getDateTime());
-        image.setMinioUrl(fileInfo.getMinioUrl());
-        image.setCategoryId(categories.stream().filter(dbCategory -> dbCategory.getType().equals(fileInfo.getCategory())).findFirst().orElse(null));
-        image.setAnimalCount(fileInfo.getAnimalCount());
-        image.setThreshold(fileInfo.getThreshold());
-        return image;
+        ImageMapper imageMapper = new ImageMapper();
+        return imageMapper.toEntity(fileInfo, categories);
     }
 
     @Override

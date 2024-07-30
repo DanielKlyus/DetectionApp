@@ -86,15 +86,20 @@ public class ImageServiceImpl implements ImageService {
         List<Image> images = new ArrayList<>();
         files.forEach(fileInfo -> {
             Image image = fileInfo.toEntity(fileInfo, categories);
-            if (image.getDateTime() != null) {
+            if (Objects.equals(image.getCategoryId().getClassType(), "animal") && image.getDateTime() != null) {
                 images.add(image);
-            } else imageRepository.save(image);
+            } else {
+                imageRepository.save(image);
+                Category category = categoryRepository.findById(image.getCategoryId().getId()).orElseThrow(() -> new CategoryException("Category not found"));
+                log.info("\nImage {} saved with category {}", image.getName(), category.getName());
+
+            }
         });
         List<Image> updatedImages = countSeries(images);
         updatedImages.forEach(image -> {
             imageRepository.save(image);
-            Category category = categoryRepository.findById(image.getId()).orElseThrow(() -> new CategoryException("Category not found"));
-            log.info("Image {} saved with category {}", image.getName(), category.getName());
+            Category category = categoryRepository.findById(image.getCategoryId().getId()).orElseThrow(() -> new CategoryException("Category not found"));
+            log.info("\nImage {} saved with category {}", image.getName(), category.getName());
         });
     }
 
@@ -145,9 +150,7 @@ public class ImageServiceImpl implements ImageService {
 
         files.forEach(fileInfo -> {
             Optional<ServerResponse> response = imageSender.sendImageToML(fileInfo.getPath());
-            log.info("\nServer response: {}", response);
-
-
+            log.info("\n Server response: {}", response);
             response.ifPresent(serverResponse -> {
                 BufferedImage image = imageDrawer.convertMultipartFileToBufferedImage(fileInfo.getFile());
                 BufferedImage drawnImage = imageDrawer.drawMlResults(image, serverResponse);
@@ -160,12 +163,6 @@ public class ImageServiceImpl implements ImageService {
                 double minMlThreshold = 0.3;
                 ServerResponse.SpeciesPredict speciesPredict = response.get().getSpeciesPredict();
                 ServerResponse.MegadetectorPredict megadetectorPredict = response.get().getMegadetectorPredict();
-                try {
-                    Date dateTime = extractDateTimeFromImage(new File(fileInfo.getPath()));
-                    fileInfo.setDateTime(dateTime);
-                } catch (Exception e) {
-                    throw new ImageException("Cannot extract date time from file: " + fileInfo.getPath());
-                }
                 if (!speciesPredict.getLabels().isEmpty()) {
                     log.info("Species predict labels for animal {} with file name {}: {}", fileInfo.getPath(), fileInfo.getName(), speciesPredict.getLabels());
                     fileInfo.setCategory(speciesPredict.getLabels().get(0));
@@ -198,14 +195,18 @@ public class ImageServiceImpl implements ImageService {
     protected List<FileInfo> convertSourceFileToFileInfo(String directoryPath) {
         List<FileInfo> result = new ArrayList<>();
 
-        try (Stream<Path> pathStream = Files.walk(Path.of(directoryPath))) {
+        try (Stream<Path> pathStream = Files.list(Path.of(directoryPath))) {
             pathStream
-                    .filter(Files::isRegularFile)
+                    .filter(path -> {
+                        String fileName = path.getFileName().toString().toLowerCase();
+                        return fileName.endsWith(".jpeg") || fileName.endsWith(".png") || fileName.endsWith(".jpg");
+                    })
                     .forEach(path -> {
                         File file = path.toFile();
 
                         int originalWidth;
                         int originalHeight;
+                        Date dateTime;
                         try {
                             BufferedImage originalImage = ImageIO.read(file);
                             originalWidth = originalImage.getWidth();
@@ -213,12 +214,16 @@ public class ImageServiceImpl implements ImageService {
                         } catch (IOException e) {
                             throw new ImageException("Cannot read file: " + file.getPath());
                         }
-
+                        try {
+                            dateTime = extractDateTimeFromImage(new File(file.getPath()));
+                        } catch (Exception e) {
+                            throw new ImageException("Cannot extract date time from file: " + file.getPath());
+                        }
                         imageDrawer.resizeImage(file);
 
-                        try (FileInputStream inputStream = new FileInputStream(file)) {
+                        try (FileInputStream inputStream = new FileInputStream(path.getParent() + "/temp/" + path.getFileName())) {
                             MockMultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), Files.probeContentType(path), inputStream);
-                            FileInfo fileInfo = new FileInfo(file.getName(), path.toString(), multipartFile, originalWidth, originalHeight);
+                            FileInfo fileInfo = new FileInfo(file.getName(), path.getParent() + "/temp/" + path.getFileName(), multipartFile, dateTime, originalWidth, originalHeight);
                             result.add(fileInfo);
                         } catch (IOException e) {
                             log.error("Cannot upload images from path {} : {}", directoryPath, e.getMessage());

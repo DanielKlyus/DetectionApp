@@ -11,14 +11,14 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GetCategoriesResponse {
     private Long id;
-    
+
     private String name;
-    
+
     private String species;
-    
+
     private String img;
-    
+
     private String classType;
-    
+
     private String type;
 }

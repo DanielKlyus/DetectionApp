@@ -10,9 +10,5 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateUserResponse {
-    private Long id;
-
-    private String name;
-
-    private boolean isAdmin;
+    private String jwt;
 }

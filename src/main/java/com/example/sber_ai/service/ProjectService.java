@@ -26,4 +26,6 @@ public interface ProjectService {
     void deleteCategory(Long categoryId);
 
     void countPassages(Long projectId, Long minutes);
+
+    void saveImages(Long projectId);
 }

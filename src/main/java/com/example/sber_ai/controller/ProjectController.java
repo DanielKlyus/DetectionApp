@@ -145,14 +145,14 @@ public class ProjectController {
 
     @Operation(summary = "Сохранение фотографий",
             description = "Выполняет сохранение фотографий, отсортированных по категориям")
-    @GetMapping("/{projectId}/save")
+    @PostMapping("/{projectId}/save")
     public ResponseEntity<Void> saveImages(@PathVariable Long userId, @PathVariable Long projectId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         if (!String.valueOf(userId).equals(userDetails.getUsername())) {
             throw new AuthException("Access denied");
         }
-//        projectService.saveImages(type, projectId);
+        projectService.saveImages(projectId);
         return ResponseEntity.ok().build();
     }
 }

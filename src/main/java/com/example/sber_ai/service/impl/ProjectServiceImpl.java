@@ -1,8 +1,6 @@
 package com.example.sber_ai.service.impl;
 
-import com.example.sber_ai.exception.CategoryException;
-import com.example.sber_ai.exception.ImageException;
-import com.example.sber_ai.exception.ProjectException;
+import com.example.sber_ai.exception.*;
 import com.example.sber_ai.model.entity.Category;
 import com.example.sber_ai.model.entity.Image;
 import com.example.sber_ai.model.entity.Project;
@@ -24,6 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -179,6 +180,26 @@ public class ProjectServiceImpl implements ProjectService {
         images.forEach(image -> {
             imageRepository.save(image);
             log.info("\nImage: {}, passage: {}, animalsInPassage: {}", image.getName(), image.getPassage(), image.getAnimalCountInPassage());
+        });
+    }
+
+    @Override
+    public void saveImages(Long projectId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectException("Project with id " + projectId + " not found"));
+        List<Category> categories = categoryRepository.findAllByProjectId(project);
+        String newFolder = "/categories/";
+        categories.forEach(category -> {
+            List<Image> images = imageRepository.findAllByCategoryId(category);
+            images.forEach(image -> {
+                Path destinationPath = Path.of(project.getPathSave() + newFolder + category.getName() + "/" + image.getName());
+                try {
+                    Files.createDirectories(destinationPath.getParent());
+                    Files.copy(Path.of(image.getPath()), destinationPath);
+                } catch (IOException e) {
+                    log.error("Cannot copy image: {}", e.getMessage());
+                    throw new SaveImagesException("Cannot copy image");
+                }
+            });
         });
     }
 }

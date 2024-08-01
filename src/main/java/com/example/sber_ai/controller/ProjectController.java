@@ -121,7 +121,12 @@ public class ProjectController {
 
     @Operation(summary = "Просчет проходов")
     @PostMapping("/{projectId}/countPassages")
-    public ResponseEntity<Void> countPassages(@PathVariable Long projectId, @RequestParam Long minutes) {
+    public ResponseEntity<Void> countPassages(@PathVariable String userId, @PathVariable Long projectId, @RequestParam Long minutes) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        if (!String.valueOf(userId).equals(userDetails.getUsername())) {
+            throw new AuthException("Access denied");
+        }
         projectService.countPassages(projectId, minutes);
         return ResponseEntity.ok().build();
     }

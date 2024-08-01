@@ -185,21 +185,33 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public void saveImages(Long projectId) {
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectException("Project with id " + projectId + " not found"));
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException("Project with id " + projectId + " not found"));
         List<Category> categories = categoryRepository.findAllByProjectId(project);
-        String newFolder = "/categories/";
-        categories.forEach(category -> {
+        String baseDirectory = project.getPathSave() + "/categories/";
+
+        for (Category category : categories) {
             List<Image> images = imageRepository.findAllByCategoryId(category);
-            images.forEach(image -> {
-                Path destinationPath = Path.of(project.getPathSave() + newFolder + category.getName() + "/" + image.getName());
+            if (!images.isEmpty()) {
+                Path categoryPath = Path.of(baseDirectory + category.getName());
                 try {
-                    Files.createDirectories(destinationPath.getParent());
-                    Files.copy(Path.of(image.getPath()), destinationPath);
+                    Files.createDirectories(categoryPath);
                 } catch (IOException e) {
-                    log.error("Cannot copy image: {}", e.getMessage());
-                    throw new SaveImagesException("Cannot copy image");
+                    log.error("Cannot create directory: {}", e.getMessage());
+                    throw new CreateDirectoryException("Cannot create directory");
                 }
-            });
-        });
+
+                for (Image image : images) {
+                    Path sourcePath = Path.of(image.getPath());
+                    Path destinationPath = categoryPath.resolve(image.getName());
+                    try {
+                        Files.copy(sourcePath, destinationPath);
+                    } catch (IOException e) {
+                        log.error("Cannot copy image: {}", e.getMessage());
+                        throw new SaveImagesException("Cannot copy image");
+                    }
+                }
+            }
+        }
     }
 }

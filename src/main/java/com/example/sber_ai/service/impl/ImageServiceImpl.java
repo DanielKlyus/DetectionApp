@@ -155,7 +155,7 @@ public class ImageServiceImpl implements ImageService {
             throw new ImageException("Directory does not exist or is not a directory: " + directoryPath);
         }
 
-        try (Stream<Path> pathStream = Files.list(Path.of(directoryPath))) {
+        try (Stream<Path> pathStream = Files.list(dirPath)) {
             pathStream
                     .filter(path -> {
                         String fileName = path.getFileName().toString().toLowerCase();

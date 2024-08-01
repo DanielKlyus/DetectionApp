@@ -1,5 +1,6 @@
 package com.example.sber_ai.util;
 
+import com.example.sber_ai.exception.CreateDirectoryException;
 import com.example.sber_ai.exception.ImageException;
 import com.example.sber_ai.model.response.ServerResponse;
 import com.example.sber_ai.model.response.ServerResponse.MegadetectorPredict;
@@ -77,14 +78,19 @@ public class ImageDrawer {
         final int maxWidth = 1333;
         final int maxHeight = 800;
 
-        File tempDir = new File(image.getParentFile(), "temp");
-        if (!tempDir.exists()) {
-            tempDir.mkdirs();
-        }
-
-        File outputFile = new File(tempDir, image.getName());
-
         try {
+            File tempDir = new File(image.getParentFile(), "temp");
+            if (!tempDir.exists()) {
+                if(tempDir.mkdirs()) {
+                    log.info("Temp dir created: {}", tempDir.getAbsolutePath());
+                } else {
+                    log.error("Cannot create temp dir: {}", tempDir.getAbsolutePath());
+                    throw new CreateDirectoryException("Cannot create temp dir");
+                }
+            }
+
+            File outputFile = new File(tempDir, image.getName());
+
             BufferedImage originalImage = ImageIO.read(image);
 
             int originalWidth = originalImage.getWidth();
@@ -114,6 +120,8 @@ public class ImageDrawer {
         } catch (IOException e) {
             log.error("Cannot resize image {}: {}", image.getPath(), e.getMessage());
             throw new ImageException("Cannot resize image");
+        } catch (CreateDirectoryException e) {
+            throw new CreateDirectoryException(e.getLocalizedMessage());
         }
     }
 

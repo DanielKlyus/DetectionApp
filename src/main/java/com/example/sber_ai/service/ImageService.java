@@ -1,11 +1,13 @@
 package com.example.sber_ai.service;
 
 import com.example.sber_ai.model.file.FileInfo;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface ImageService {
+
     void uploadSourceFiles(String directoryPath, String projectName, String pathSave);
 
     void saveAll(List<FileInfo> files, String projectName);
@@ -13,6 +15,4 @@ public interface ImageService {
     String uploadFile(MultipartFile categoryImg);
 
     String getMinioCategoryUrl(String categoryType);
-
-//    void getDatetime();
 }

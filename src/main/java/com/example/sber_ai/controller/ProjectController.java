@@ -119,6 +119,13 @@ public class ProjectController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Просчет проходов")
+    @PostMapping("/{projectId}/countPassages")
+    public ResponseEntity<Void> countPassages(@PathVariable Long projectId, @RequestParam Long minutes) {
+        projectService.countPassages(projectId, minutes);
+        return ResponseEntity.ok().build();
+    }
+
     @Operation(summary = "Удаление категории в проекте")
     @DeleteMapping("/{projectId}/categories/{categoryId}/delete")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long userId, @PathVariable Long projectId, @PathVariable Long categoryId) {

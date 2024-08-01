@@ -1,6 +1,5 @@
 package com.example.sber_ai.service;
 
-import com.example.sber_ai.model.entity.Image;
 import com.example.sber_ai.model.file.FileInfo;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +15,4 @@ public interface ImageService {
     String uploadFile(MultipartFile categoryImg);
 
     String getMinioCategoryUrl(String categoryType);
-
-    List<Image> countSeries(List<Image> images);
 }

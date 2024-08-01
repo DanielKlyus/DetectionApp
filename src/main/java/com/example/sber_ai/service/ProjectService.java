@@ -24,4 +24,6 @@ public interface ProjectService {
     void changeCategory(Long imageId, Long newCategoryId);
 
     void deleteCategory(Long categoryId);
+
+    void countPassages(Long projectId, Long minutes);
 }

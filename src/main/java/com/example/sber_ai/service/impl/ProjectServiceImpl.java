@@ -24,9 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -144,5 +143,52 @@ public class ProjectServiceImpl implements ProjectService {
     public void deleteCategory(Long categoryId) {
         categoryRepository.deleteById(categoryId);
         log.info("Category with id {} deleted", categoryId);
+    }
+
+    @Override
+    public void countPassages(Long projectId, Long minutes) {
+        List<Image> images = imageRepository.findAllAnimalImagesAndDatetimeIsNotNullByProject(projectId);
+        images.sort(new Comparator<Image>() {
+            @Override
+            public int compare(Image i1, Image i2) {
+                return i1.getDateTime().compareTo(i2.getDateTime());
+            }
+        });
+        int currentPassage = 0;
+        int maxAnimals = 0;
+        Stack<Image> stack = new Stack<>();
+        for (Image image : images) {
+            if (stack.isEmpty()) {
+                // Начало проходов
+                currentPassage++;
+                image.setPassage(currentPassage);
+                maxAnimals = image.getAnimalCount();
+                stack.push(image);
+            } else if (image.getCategoryId() != stack.peek().getCategoryId() ||
+                    image.getDateTime().getTime() - stack.peek().getDateTime().getTime() > TimeUnit.MINUTES.toMillis(minutes)) {
+                // Завершение текущего прохода
+                while (!stack.isEmpty()) {
+                    stack.pop().setAnimalCountInPassage(maxAnimals);
+                }
+                currentPassage++;
+                maxAnimals = image.getAnimalCount();
+                image.setPassage(currentPassage);
+                stack.push(image);
+            } else {
+                // Продолжение текущего прохода
+                image.setPassage(currentPassage);
+                maxAnimals = Math.max(maxAnimals, image.getAnimalCount());
+                stack.push(image);
+            }
+        }
+        // Завершение последнего прохода
+        while (!stack.isEmpty()) {
+            stack.pop().setAnimalCountInPassage(maxAnimals);
+        }
+
+        images.forEach(image -> {
+            imageRepository.save(image);
+            log.info("\nImage: {}, passage: {}, animalsInPassage: {}", image.getName(), image.getPassage(), image.getAnimalCountInPassage());
+        });
     }
 }

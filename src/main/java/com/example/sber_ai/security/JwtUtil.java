@@ -16,26 +16,26 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
 
-    public String generateToken(String username) {
+    public String generateToken(Long id) {
         Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(120).toInstant());
 
         return JWT.create()
                 .withSubject("User details")
-                .withClaim("username", username)
+                .withClaim("id", id)
                 .withExpiresAt(expirationDate)
                 .withIssuedAt(new Date())
                 .withIssuer("Wild Nature")
                 .sign(Algorithm.HMAC512(secret));
     }
 
-    public String validateToken(String token) {
+    public Long validateToken(String token) {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC512(secret))
                 .withSubject("User details")
                 .withIssuer("Wild Nature")
                 .build();
 
         DecodedJWT jwt = verifier.verify(token);
-        return jwt.getClaim("username").asString();
+        return jwt.getClaim("id").asLong();
     }
 
 }

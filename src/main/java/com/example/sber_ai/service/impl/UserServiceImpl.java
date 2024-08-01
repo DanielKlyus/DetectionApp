@@ -42,17 +42,17 @@ public class UserServiceImpl implements UserService {
         user.setAdmin(false);
         userRepository.save(user);
 
-        return new CreateUserResponse(jwtUtil.generateToken(user.getUsername()));
+        return new CreateUserResponse(jwtUtil.generateToken(user.getId()));
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = userRepository.findById(Long.valueOf(username));
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("Invalid username or password.");
         }
 
-        return new org.springframework.security.core.userdetails.User(user.get().getUsername(), user.get().getPassword(), getGrantedAuthorities(user.get().getRoles()));
+        return new org.springframework.security.core.userdetails.User(String.valueOf(user.get().getId()), user.get().getPassword(), getGrantedAuthorities(user.get().getRoles()));
     }
 
     private List<GrantedAuthority> getGrantedAuthorities(List<Role> roles) {

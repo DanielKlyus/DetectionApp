@@ -2,6 +2,7 @@ package com.example.sber_ai.service.impl;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.example.sber_ai.exception.ImageException;
 import com.example.sber_ai.model.entity.Category;
@@ -58,20 +59,12 @@ public class ImageServiceImpl implements ImageService {
 
     private final ObjectMapper objectMapper;
 
-//    @Setter
-//    @Getter
-//    private class ImageSeries {
-//        private Integer passage;
-//
-//        private Integer countInPassage;
-//    }
-
     protected static Date extractDateTimeFromImage(File imageFile) throws Exception {
         Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
         ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
 
         if (directory != null) {
-            return directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+            return directory.getDate(ExifDirectoryBase.TAG_DATETIME_ORIGINAL);
         } else {
             return null;
         }
@@ -168,7 +161,12 @@ public class ImageServiceImpl implements ImageService {
     protected List<FileInfo> convertSourceFileToFileInfo(String directoryPath) {
         List<FileInfo> result = new ArrayList<>();
 
-        try (Stream<Path> pathStream = Files.walk(Path.of(directoryPath))) {
+        Path dirPath = Path.of(directoryPath);
+        if (!Files.exists(dirPath) || !Files.isDirectory(dirPath)) {
+            throw new ImageException("Directory does not exist or is not a directory: " + directoryPath);
+        }
+
+        try (Stream<Path> pathStream = Files.walk(dirPath)) {
             pathStream
                     .filter(path -> {
                         String fileName = path.getFileName().toString().toLowerCase();
@@ -194,14 +192,14 @@ public class ImageServiceImpl implements ImageService {
                             FileInfo fileInfo = new FileInfo(file.getName(), path.toString(), multipartFile, originalWidth, originalHeight);
                             result.add(fileInfo);
                         } catch (IOException e) {
-                            log.error("Cannot upload images from path {} : {}", directoryPath, e.getMessage());
-                            throw new ImageException("Cannot upload images");
+                            log.error("Cannot upload images from path {} : {}", dirPath, e.getMessage());
+                            throw new ImageException(e.getLocalizedMessage());
                         }
                     });
 
         } catch (IOException e) {
-            log.error("Cannot upload images from path {} : {}", directoryPath, e.getMessage());
-            throw new ImageException("Cannot upload images");
+            log.error("Cannot upload images from path {} : {}", dirPath, e.getMessage());
+            throw new ImageException(e.getLocalizedMessage());
         }
 
         return result;

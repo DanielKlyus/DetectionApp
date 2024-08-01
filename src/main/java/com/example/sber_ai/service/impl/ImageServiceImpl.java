@@ -3,7 +3,6 @@ package com.example.sber_ai.service.impl;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
-import com.example.sber_ai.exception.CategoryException;
 import com.example.sber_ai.exception.ImageException;
 import com.example.sber_ai.model.entity.Category;
 import com.example.sber_ai.model.entity.Image;
@@ -34,7 +33,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 @Service

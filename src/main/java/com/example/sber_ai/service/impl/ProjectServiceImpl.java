@@ -148,12 +148,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void countPassages(Long projectId, Long minutes) {
         List<Image> images = imageRepository.findAllAnimalImagesAndDatetimeIsNotNullByProject(projectId);
-        images.sort(new Comparator<Image>() {
-            @Override
-            public int compare(Image i1, Image i2) {
-                return i1.getDateTime().compareTo(i2.getDateTime());
-            }
-        });
+        images.sort(Comparator.comparing(Image::getDateTime));
         int currentPassage = 0;
         int maxAnimals = 0;
         Stack<Image> stack = new Stack<>();

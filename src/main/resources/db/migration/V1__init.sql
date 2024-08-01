@@ -12,7 +12,6 @@ CREATE TABLE IF NOT EXISTS projects
     "path_source" TEXT                  NOT NULL,
     "path_save"   TEXT                  NOT NULL,
     "user_id"     BIGINT                NOT NULL,
-    "is_active"   BOOLEAN               NOT NULL,
     "result"      JSONB,
     CONSTRAINT fk_projects_user FOREIGN KEY ("user_id") REFERENCES users ("id")
 );

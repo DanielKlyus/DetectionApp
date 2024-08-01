@@ -18,7 +18,6 @@ public interface ProjectMapper {
     GetProjectResponse mapToGetResponse(Project project);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "isActive", constant = "true")
     @Mapping(source = "userId", target = "user.id")
     Project mapToEntity(CreateProjectRequest request);
 

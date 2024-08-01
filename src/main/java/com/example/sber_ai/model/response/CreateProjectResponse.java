@@ -19,6 +19,4 @@ public class CreateProjectResponse {
     private String pathSave;
 
     private Long userId;
-
-    private Boolean isActive;
 }

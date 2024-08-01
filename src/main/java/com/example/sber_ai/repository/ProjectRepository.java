@@ -9,6 +9,4 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     ArrayList<Project> findAllByUserId(Long id);
 
     Project findByName(String name);
-
-    Project findByIsActiveAndId(Boolean active, Long projectId);
 }

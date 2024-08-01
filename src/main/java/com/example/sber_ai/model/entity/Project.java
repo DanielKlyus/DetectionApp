@@ -29,9 +29,6 @@ public class Project {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
-
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "result", columnDefinition = "jsonb")
     private List<ResultJson> result;

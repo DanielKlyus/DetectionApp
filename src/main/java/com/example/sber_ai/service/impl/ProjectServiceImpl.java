@@ -51,11 +51,6 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public CreateProjectResponse createProject(CreateProjectRequest createProjectRequest) {
-        ArrayList<Project> projects = projectRepository.findAllByUserId(createProjectRequest.getUserId());
-        for (Project p : projects) {
-            p.setIsActive(false);
-        }
-
         Project project = projectMapper.mapToEntity(createProjectRequest);
         projectRepository.save(project);
 
@@ -101,7 +96,7 @@ public class ProjectServiceImpl implements ProjectService {
     public CreateCategoryResponse createCategory(CreateCategoryRequest createCategoryRequest, Long projectId) {
         String categoryUrl = imageService.uploadFile(createCategoryRequest.getImg());
 
-        Project project = projectRepository.findByIsActiveAndId(true, projectId);
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectException("Project with id " + projectId + " not found"));
         Category category = categoryMapper.mapToEntity(createCategoryRequest, categoryUrl, project);
         categoryRepository.save(category);
 

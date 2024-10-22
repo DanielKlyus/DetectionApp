@@ -1,0 +1,73 @@
+version: "3.9"
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: zoode_nginx
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - zoode_network
+  db:
+    image: postgres:alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=zoode-db
+      - POSTGRES_USER=defaultuser
+      - POSTGRES_PASSWORD=defaultpassword
+      - POSTGRES_PORT=5432
+    ports:
+      - "5432:5432"
+    container_name: zoode-db
+    networks:
+      - zoode_network
+  web:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7890:7879"
+    restart: unless-stopped
+    container_name: zoode_web
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/zoode-db
+      - SPRING_DATASOURCE_USERNAME=defaultuser
+      - SPRING_DATASOURCE_PASSWORD=defaultpassword
+      - ML_SERVER_URL=https://mlspace.ai.cloud.ru/deployments/dgx2-inf-001/kfserving-1718613717/species_detection/find_and_classify
+      - X_WORKSPACE_ID=ff58e155-45ad-4f29-ab72-63b1747ae982
+      - SERVER_AUTH_USERNAME=wild_nature
+      - SERVER_AUTH_PASSWORD=is_beautifull!
+    networks:
+      - zoode_network
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      - MINIO_ENDPOINT=http://127.0.0.1:9001
+      - MINIO_ROOT_USER=miniotestname
+      - MINIO_ROOT_PASSWORD=miniotestpassword
+    volumes:
+      - minio_storage:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - zoode_network
+
+volumes:
+  minio_storage: {}
+
+networks:
+  zoode_network:
+    driver: bridge
